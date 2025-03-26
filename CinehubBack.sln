@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinehubBack", "CinehubBack\CinehubBack.csproj", "{3A313304-B856-4D49-806E-9A21245A9BD4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{752B698A-6B38-4FDC-A496-20905C0542D9}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A313304-B856-4D49-806E-9A21245A9BD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A313304-B856-4D49-806E-9A21245A9BD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A313304-B856-4D49-806E-9A21245A9BD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A313304-B856-4D49-806E-9A21245A9BD4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,37 @@
+﻿services:
+  api:
+    build: .
+    container_name: cinehub-api
+    ports:
+      - '8080:8080'
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - saas-network
+
+  db:
+    image: mysql:5.7
+    container_name: cinehub-db
+    environment:
+      MYSQL_DATABASE: cinehub-db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass123
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+    volumes:
+      - saas-volume:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - saas-network
+
+volumes:
+  saas-volume:
+
+networks:
+  saas-network:
