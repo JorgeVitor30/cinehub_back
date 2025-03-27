@@ -4,6 +4,7 @@ using CinehubBack.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinehubBack.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250327230050_MovieEntity")]
+    partial class MovieEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,8 +38,7 @@ namespace CinehubBack.Migrations
 
                     b.Property<string>("BackPhotoUrl")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("backdrop_path");
+                        .HasColumnType("longtext");
 
                     b.Property<decimal>("Budget")
                         .HasColumnType("decimal(65,30)")
@@ -71,7 +73,7 @@ namespace CinehubBack.Migrations
                     b.Property<string>("PosterPhotoUrl")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("poster_path");
+                        .HasColumnName("backdrop_path");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime(6)")
