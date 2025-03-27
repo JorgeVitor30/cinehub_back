@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "Admin,Customer")]
+    [Authorize(Roles = "Admin,User")]
     public IActionResult GetAll([FromQuery] string? name, [FromQuery] int size = 10, [FromQuery] int page = 0)
     {
       var parameter = new Parameter {
@@ -38,7 +38,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = "Admin,Customer")]
+    [Authorize(Roles = "Admin,User")]
     public IActionResult GetById(Guid id)
     {
         return Ok(_service.GetById(id));
