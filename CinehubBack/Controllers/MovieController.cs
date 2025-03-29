@@ -1,4 +1,3 @@
-using Api.Data.Dtos;
 using CinehubBack.Services.Movie;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +17,7 @@ public class MovieController: ControllerBase
     }
     
     [HttpGet]
-    //[Authorize(Roles = "Admin,User")]
+    [Authorize(Roles = "Admin,User")]
     public IActionResult GetAll([FromQuery] string? title, [FromQuery] int size = 10, [FromQuery] int page = 0)
     {
         var parameter = new Parameter {

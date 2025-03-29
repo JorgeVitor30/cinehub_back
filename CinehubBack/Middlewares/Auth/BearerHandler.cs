@@ -1,15 +1,10 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
-using CinehubBack.Expections;
 using CinehubBack.Services.Auth;
 using CinehubBack.Services.User;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace CinehubBack.Middlewares.Auth;
 
@@ -42,33 +37,10 @@ public class BearerHandler : AuthenticationHandler<AuthenticationSchemeOptions>
             return AuthenticateResult.Fail("Token expected is not present");
         }
 
-        var authHeader = Request.Headers["Authorization"].ToString();
-        if (!authHeader.StartsWith("Bearer "))
-        {
-            return AuthenticateResult.Fail("Invalid Authorization header");
-        }
-
-        var token = authHeader.Substring("Bearer ".Length).Trim();
         try
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes("your-secret-key-here-at-least-16-chars"); // Replace with your key
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = "your-issuer",
-                ValidAudience = "your-audience",
-                IssuerSigningKey = new SymmetricSecurityKey(key)
-            }, out var validatedToken);
-
-            var jwtToken = (JwtSecurityToken)validatedToken;
-            var claims = jwtToken.Claims;
-            var identity = new ClaimsIdentity(claims, Scheme.Name);
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, Scheme.Name);
+            var token = ExtractTokenFromHeader(Request.Headers);
+            var ticket = GetTicket(token);
             return AuthenticateResult.Success(ticket);
         }
         catch (Exception ex)
