@@ -1,6 +1,7 @@
 using CinehubBack.Data;
 using CinehubBack.Extensions;
 using CinehubBack.Middlewares;
+using CinehubBack.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -24,6 +25,7 @@ builder.Services.AddControllers();
 builder.Services.AddDependencies();
 builder.Services.AddCustomAuthorization();
 builder.Services.AddCustomAuthentication();
+builder.Services.AddScoped<SeedingData>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -71,6 +73,12 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
     db.Database.Migrate();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var seedingData = scope.ServiceProvider.GetRequiredService<SeedingData>();
+    seedingData.Initialize();
 }
 
 app.UseMiddleware<ExceptionMiddleware>();

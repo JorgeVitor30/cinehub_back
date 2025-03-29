@@ -39,5 +39,9 @@ public class MovieMapping: BaseMapping<Movie>
         builder.Property(m => m.Tagline).HasColumnName("tagline").IsRequired();
 
         builder.Property(m => m.KeyWords).HasColumnName("keywords").IsRequired();
+
+        builder.Property(m => m.Productions).HasColumnName("productions").IsRequired();
+        
+        builder.Property(m => m.Genres).HasColumnName("genres").IsRequired();
     }
 }

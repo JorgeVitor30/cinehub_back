@@ -31,16 +31,19 @@ namespace CinehubBack.Migrations
 
                     b.Property<bool>("Adult")
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("adult");
+                        .HasColumnName("adult")
+                        .HasAnnotation("Relational:JsonPropertyName", "adult");
 
                     b.Property<string>("BackPhotoUrl")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("backdrop_path");
+                        .HasColumnName("backdrop_path")
+                        .HasAnnotation("Relational:JsonPropertyName", "backdrop_path");
 
                     b.Property<decimal>("Budget")
                         .HasColumnType("decimal(65,30)")
-                        .HasColumnName("budget");
+                        .HasColumnName("budget")
+                        .HasAnnotation("Relational:JsonPropertyName", "budget");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -49,51 +52,73 @@ namespace CinehubBack.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedAt"));
 
+                    b.Property<string>("Genres")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("genres")
+                        .HasAnnotation("Relational:JsonPropertyName", "genres");
+
                     b.Property<string>("KeyWords")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("keywords");
+                        .HasColumnName("keywords")
+                        .HasAnnotation("Relational:JsonPropertyName", "keywords");
 
                     b.Property<string>("OriginalLanguage")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("original_language");
+                        .HasColumnName("original_language")
+                        .HasAnnotation("Relational:JsonPropertyName", "original_language");
 
                     b.Property<string>("Overview")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("overview");
+                        .HasColumnName("overview")
+                        .HasAnnotation("Relational:JsonPropertyName", "overview");
 
                     b.Property<decimal>("Popularity")
                         .HasColumnType("decimal(65,30)")
-                        .HasColumnName("popularity");
+                        .HasColumnName("popularity")
+                        .HasAnnotation("Relational:JsonPropertyName", "popularity");
 
                     b.Property<string>("PosterPhotoUrl")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("poster_path");
+                        .HasColumnName("poster_path")
+                        .HasAnnotation("Relational:JsonPropertyName", "poster_path");
+
+                    b.Property<string>("Productions")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("productions")
+                        .HasAnnotation("Relational:JsonPropertyName", "production_companies");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("release_date");
+                        .HasColumnName("release_date")
+                        .HasAnnotation("Relational:JsonPropertyName", "release_date");
 
                     b.Property<decimal>("Revenue")
                         .HasColumnType("decimal(65,30)")
-                        .HasColumnName("revenue");
+                        .HasColumnName("revenue")
+                        .HasAnnotation("Relational:JsonPropertyName", "revenue");
 
                     b.Property<int>("RunTime")
                         .HasColumnType("int")
-                        .HasColumnName("runtime");
+                        .HasColumnName("runtime")
+                        .HasAnnotation("Relational:JsonPropertyName", "runtime");
 
                     b.Property<string>("Tagline")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("tagline");
+                        .HasColumnName("tagline")
+                        .HasAnnotation("Relational:JsonPropertyName", "tagline");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("longtext")
-                        .HasColumnName("title");
+                        .HasColumnName("title")
+                        .HasAnnotation("Relational:JsonPropertyName", "title");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -104,11 +129,13 @@ namespace CinehubBack.Migrations
 
                     b.Property<decimal>("VoteAverage")
                         .HasColumnType("decimal(65,30)")
-                        .HasColumnName("vote_average");
+                        .HasColumnName("vote_average")
+                        .HasAnnotation("Relational:JsonPropertyName", "vote_average");
 
                     b.Property<int>("VoteCount")
                         .HasColumnType("int")
-                        .HasColumnName("vote_count");
+                        .HasColumnName("vote_count")
+                        .HasAnnotation("Relational:JsonPropertyName", "vote_count");
 
                     b.HasKey("Id");
 

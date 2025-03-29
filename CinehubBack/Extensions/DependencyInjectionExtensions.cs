@@ -30,6 +30,7 @@ public static class DependencyInjectionExtensions
     private static void AddRepositories(IServiceCollection services)
     {
         services.AddScoped<IRepository<User>, BaseRepository<User>>();
+        services.AddScoped<IRepository<Movie>, BaseRepository<Movie>>();
     }
 
     private static void AddAdapters(IServiceCollection services) { }
