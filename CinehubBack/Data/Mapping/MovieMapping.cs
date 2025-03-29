@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CinehubBack.Data.Mapping;
 
-public class MovieMapping: BaseMapping<Movie>
+public class MovieMapping: BaseMapping<Model.Movie>
 {
-    public override void Setup(EntityTypeBuilder<Movie> builder)
+    public override void Setup(EntityTypeBuilder<Model.Movie> builder)
     {
         builder.ToTable("movie");
         

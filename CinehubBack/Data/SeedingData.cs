@@ -39,7 +39,7 @@ public class SeedingData
             AllowTrailingCommas = true
         };
 
-        List<Movie>? movies = JsonSerializer.Deserialize<List<Movie>>(json, options);
+        List<Model.Movie>? movies = JsonSerializer.Deserialize<List<Model.Movie>>(json, options);
 
         if (movies != null)
         {
