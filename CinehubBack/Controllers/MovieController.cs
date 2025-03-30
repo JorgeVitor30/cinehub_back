@@ -33,4 +33,12 @@ public class MovieController: ControllerBase
     {
         return Ok(_service.GetById(id));
     }
+    
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    public IActionResult Delete(Guid id)
+    {
+        _service.DeleteById(id);
+        return NoContent();
+    }
 }

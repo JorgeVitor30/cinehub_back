@@ -45,4 +45,10 @@ public class MovieService: IMovieService
                    "Movie not found"
                );
     }
+    
+    public void DeleteById(Guid id)
+    {
+        _repository.DeleteById(id);
+        _repository.SaveChanges();
+    }
 }
