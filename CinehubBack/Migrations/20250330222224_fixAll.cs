@@ -7,11 +7,14 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CinehubBack.Migrations
 {
     /// <inheritdoc />
-    public partial class MovieEntity : Migration
+    public partial class fixAll : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "movie",
                 columns: table => new
@@ -28,9 +31,9 @@ namespace CinehubBack.Migrations
                     runtime = table.Column<int>(type: "int", nullable: false),
                     adult = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     budget = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    backdrop_path = table.Column<string>(type: "longtext", nullable: false)
+                    poster_path = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    BackPhotoUrl = table.Column<string>(type: "longtext", nullable: false)
+                    backdrop_path = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     original_language = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -38,6 +41,10 @@ namespace CinehubBack.Migrations
                     tagline = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     keywords = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    productions = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    genres = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
@@ -49,6 +56,29 @@ namespace CinehubBack.Migrations
                     table.PrimaryKey("PK_movie", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "user",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    email = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    role = table.Column<int>(type: "int", nullable: false),
+                    password = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    updated_at = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
         }
 
         /// <inheritdoc />
@@ -56,6 +86,9 @@ namespace CinehubBack.Migrations
         {
             migrationBuilder.DropTable(
                 name: "movie");
+
+            migrationBuilder.DropTable(
+                name: "user");
         }
     }
 }

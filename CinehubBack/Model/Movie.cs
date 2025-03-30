@@ -11,10 +11,10 @@ namespace CinehubBack.Model
         public required string Overview { get; set; }
 
         [JsonPropertyName("vote_count")]  
-        public required int VoteCount { get; set; }
+        public required int VoteCount { get; set; } = 0;
 
         [JsonPropertyName("vote_average")] 
-        public required decimal VoteAverage { get; set; }
+        public required decimal VoteAverage { get; set; } = 0;
 
         [JsonPropertyName("release_date")]  
         public required DateTime ReleaseDate { get; set; }
@@ -31,15 +31,15 @@ namespace CinehubBack.Model
         [JsonPropertyName("budget")]  
         public required decimal Budget { get; set; }
 
-        [JsonPropertyName("poster_path")] public required string PosterPhotoUrl { get; set; }
+        [JsonPropertyName("poster_path")] public string PosterPhotoUrl { get; set; } = string.Empty;
 
-        [JsonPropertyName("backdrop_path")] public required string BackPhotoUrl { get; set; }
+        [JsonPropertyName("backdrop_path")] public string BackPhotoUrl { get; set; } = string.Empty;
 
         [JsonPropertyName("original_language")]  
         public required string OriginalLanguage { get; set; }
 
         [JsonPropertyName("popularity")] 
-        public required decimal Popularity { get; set; }
+        public required decimal Popularity { get; set; } = 0;
 
         [JsonPropertyName("tagline")]  
         public required string Tagline { get; set; }

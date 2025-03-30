@@ -1,3 +1,4 @@
+using CinehubBack.Data.Movie;
 using CinehubBack.Services.Movie;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,14 @@ public class MovieController: ControllerBase
     public MovieController(IMovieService service)
     {
         _service = service;
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public IActionResult Create([FromBody] CreateMovieDto createMovieDto)
+    {
+        var readMovieDto = _service.Create(createMovieDto);
+        return CreatedAtAction(nameof(GetById), new { readMovieDto.Id }, readMovieDto);
     }
     
     [HttpGet]

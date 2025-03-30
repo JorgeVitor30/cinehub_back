@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Net;
 using AutoMapper;
 using CinehubBack.Data;
@@ -16,6 +17,16 @@ public class MovieService: IMovieService
     {
         _repository = repository;
         _mapper = mapper;
+    }
+    
+    public ReadMovieDto Create(CreateMovieDto createMovieDto)
+    {
+        var movie = _mapper.Map<Model.Movie>(createMovieDto);
+        CheckForDuplicate(m => m.Title == movie.Title, "Movie with this title already exists");
+        
+        _repository.Create(movie);
+        _repository.SaveChanges();
+        return _mapper.Map<ReadMovieDto>(movie);
     }
 
     public Page<ReadMovieDto> GetAll(Parameter parameter)
@@ -50,5 +61,19 @@ public class MovieService: IMovieService
     {
         _repository.DeleteById(id);
         _repository.SaveChanges();
+    }
+    
+    private void CheckForDuplicate(Expression<Func<Model.Movie, bool>> predicate, string errorMessage)
+    {
+        var exists = _repository.Raw<Model.Movie?>(query => query.FirstOrDefault(predicate));
+
+        if (exists is not null)
+        {
+            throw new BaseException(
+                ErrorCode.BadRequest(),
+                HttpStatusCode.BadRequest,
+                errorMessage
+            );
+        }
     }
 }

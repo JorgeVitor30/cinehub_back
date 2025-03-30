@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinehubBack.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250329145053_AddMoreFieldsMovie")]
-    partial class AddMoreFieldsMovie
+    [Migration("20250330222224_fixAll")]
+    partial class fixAll
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
