@@ -22,7 +22,16 @@ public class MovieService: IMovieService
     public ReadMovieDto Create(CreateMovieDto createMovieDto)
     {
         var movie = _mapper.Map<Model.Movie>(createMovieDto);
+        
         CheckForDuplicate(m => m.Title == movie.Title, "Movie with this title already exists");
+        if (movie.RunTime < 1)
+        {
+            throw new BaseException(
+                ErrorCode.BadRequest(),
+                HttpStatusCode.BadRequest,
+                "RunTime must be greater than 0"
+            );  
+        }
         
         _repository.Create(movie);
         _repository.SaveChanges();
