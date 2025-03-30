@@ -26,4 +26,11 @@ public class MovieController: ControllerBase
         };
         return Ok(_service.GetAll(parameter));
     }
+    
+    [HttpGet("{id:guid}")]
+    [Authorize(Roles = "Admin,User")]
+    public IActionResult GetById(Guid id)
+    {
+        return Ok(_service.GetById(id));
+    }
 }
