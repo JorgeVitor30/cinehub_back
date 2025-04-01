@@ -9,6 +9,7 @@ public interface IRepository<T>
     IQueryable<T> Queryable { get; }
     T? GetById(Guid id);
     Page<U> GetAll<U>(Func<IQueryable<T>, IQueryable<U>> query, Parameter parameter);
+    List<U> GetAllList<U>(Func<IQueryable<T>, IQueryable<U>> query);
     T Create(T entity);
     ICollection<T> CreateRange(ICollection<T> entities);
     T Update(T entity);

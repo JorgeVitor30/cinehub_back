@@ -24,14 +24,7 @@ public class MovieService: IMovieService
         var movie = _mapper.Map<Model.Movie>(createMovieDto);
         
         CheckForDuplicate(m => m.Title == movie.Title, "Movie with this title already exists");
-        if (movie.RunTime < 1)
-        {
-            throw new BaseException(
-                ErrorCode.BadRequest(),
-                HttpStatusCode.BadRequest,
-                "RunTime must be greater than 0"
-            );  
-        }
+        if (movie.RunTime < 1) { throw new BaseException(ErrorCode.BadRequest(), HttpStatusCode.BadRequest, "RunTime must be greater than 0");}
         
         _repository.Create(movie);
         _repository.SaveChanges();
@@ -64,6 +57,26 @@ public class MovieService: IMovieService
                    HttpStatusCode.NotFound,
                    "Movie not found"
                );
+    }
+    
+    public ReadHomeMovieDto GetHome()
+    {
+        var popularMovies = _repository.GetAllList<ReadMovieDto>(
+            query => query.OrderByDescending(m => m.Popularity).Take(10)
+                .Select(m => new ReadMovieDto { Id = m.Id, Title = m.Title, Overview = m.Overview, VoteCount = m.VoteCount, VoteAverage = m.VoteAverage, ReleaseDate = m.ReleaseDate, Revenue = m.Revenue, RunTime = m.RunTime, Adult = m.Adult, Budget = m.Budget, PosterPhotoUrl = m.PosterPhotoUrl, BackPhotoUrl = m.BackPhotoUrl, OriginalLanguage = m.OriginalLanguage, Popularity = m.Popularity, Tagline = m.Tagline, KeyWords = m.KeyWords, Productions = m.Productions, Genres = m.Genres })
+        );
+
+        var newReleases = _repository.GetAllList<ReadMovieDto>(
+            query => query.OrderByDescending(m => m.ReleaseDate).Take(10)
+                .Select(m => new ReadMovieDto { Id = m.Id, Title = m.Title, Overview = m.Overview, VoteCount = m.VoteCount, VoteAverage = m.VoteAverage, ReleaseDate = m.ReleaseDate, Revenue = m.Revenue, RunTime = m.RunTime, Adult = m.Adult, Budget = m.Budget, PosterPhotoUrl = m.PosterPhotoUrl, BackPhotoUrl = m.BackPhotoUrl, OriginalLanguage = m.OriginalLanguage, Popularity = m.Popularity, Tagline = m.Tagline, KeyWords = m.KeyWords, Productions = m.Productions, Genres = m.Genres })
+        );
+        
+        var classicMovies = _repository.GetAllList<ReadMovieDto>(
+            query => query.Where(m=> m.VoteAverage > 7 && m.Adult.Equals(false)).OrderBy(m => m.ReleaseDate).Take(10)
+                .Select(m => new ReadMovieDto { Id = m.Id, Title = m.Title, Overview = m.Overview, VoteCount = m.VoteCount, VoteAverage = m.VoteAverage, ReleaseDate = m.ReleaseDate, Revenue = m.Revenue, RunTime = m.RunTime, Adult = m.Adult, Budget = m.Budget, PosterPhotoUrl = m.PosterPhotoUrl, BackPhotoUrl = m.BackPhotoUrl, OriginalLanguage = m.OriginalLanguage, Popularity = m.Popularity, Tagline = m.Tagline, KeyWords = m.KeyWords, Productions = m.Productions, Genres = m.Genres })
+        );
+        
+        return new ReadHomeMovieDto {PopularMovies = popularMovies.ToArray(), NewReleaseMovies = newReleases.ToArray(), ClassicMovies = classicMovies.ToArray()};
     }
     
     public void DeleteById(Guid id)

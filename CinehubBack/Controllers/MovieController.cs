@@ -26,7 +26,6 @@ public class MovieController: ControllerBase
     }
     
     [HttpGet]
-    [Authorize(Roles = "Admin,User")]
     public IActionResult GetAll([FromQuery] string? title, [FromQuery] int size = 10, [FromQuery] int page = 0)
     {
         var parameter = new Parameter {
@@ -34,6 +33,12 @@ public class MovieController: ControllerBase
             Args = new Dictionary<string, object?> { {"title", title} }
         };
         return Ok(_service.GetAll(parameter));
+    }
+    
+    [HttpGet("home")]
+    public IActionResult GetHome()
+    {
+        return Ok(_service.GetHome());
     }
     
     [HttpGet("{id:guid}")]

@@ -16,6 +16,11 @@ public class BaseRepository<T> : IRepository<T>
         _dbContext = dbContext;
     }
 
+    public List<U> GetAllList<U>(Func<IQueryable<T>, IQueryable<U>> query)
+    {
+        return query(Queryable).ToList();
+    }
+
     public T Create(T entity)
     {
         _entities.Add(entity);
@@ -53,6 +58,11 @@ public class BaseRepository<T> : IRepository<T>
             CurrentPage = parameter.Page,
             Size = parameter.Size,
         };
+    }
+    
+    public List<U> GetAllList<U>(Func<IQueryable<T>, IQueryable<U>> query, Parameter parameter)
+    {
+        return query(_entities).ToList();
     }
 
     public T? GetById(Guid id)
