@@ -40,6 +40,17 @@ public class MovieService: IMovieService
             {
                 query = query.Where(m => EF.Functions.Like(m.Title, $"%{title}%"));
             }
+            var genre = parameter.Get<string>("genre");
+            if (genre != null)
+            {
+                query = query.Where(m => m.Genres.ToLower().Contains(genre.ToLower()));
+            }
+            var note = parameter.Get<decimal>("note");
+            if (note != 0)
+            {
+                query = query.Where(m => m.VoteAverage >= note);
+            }
+            
             return query.Select(m => new ReadMovieDto {Id = m.Id, Title = m.Title, Overview = m.Overview, VoteCount = m.VoteCount, VoteAverage = m.VoteAverage, ReleaseDate = m.ReleaseDate, Revenue = m.Revenue, RunTime = m.RunTime, Adult = m.Adult, Budget = m.Budget, PosterPhotoUrl = m.PosterPhotoUrl, BackPhotoUrl = m.BackPhotoUrl, OriginalLanguage = m.OriginalLanguage, Popularity = m.Popularity, Tagline = m.Tagline, KeyWords = m.KeyWords, Productions = m.Productions, Genres = m.Genres});
         }, parameter);
     }

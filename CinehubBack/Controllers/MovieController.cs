@@ -26,11 +26,11 @@ public class MovieController: ControllerBase
     }
     
     [HttpGet]
-    public IActionResult GetAll([FromQuery] string? title, [FromQuery] int size = 10, [FromQuery] int page = 0)
+    public IActionResult GetAll([FromQuery] string? title, [FromQuery] string? genre = null, [FromQuery] decimal note = 0, [FromQuery] int size = 10, [FromQuery] int page = 0)
     {
         var parameter = new Parameter {
             Page = page, Size = size,
-            Args = new Dictionary<string, object?> { {"title", title} }
+            Args = new Dictionary<string, object?> { {"title", title}, {"genre", genre}, {"note", note} }
         };
         return Ok(_service.GetAll(parameter));
     }
