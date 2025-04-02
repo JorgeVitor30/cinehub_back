@@ -72,7 +72,7 @@ public class MovieService: IMovieService
         );
         
         var classicMovies = _repository.GetAllList<ReadMovieDto>(
-            query => query.Where(m=> m.VoteAverage > 7 && m.Adult.Equals(false)).OrderBy(m => m.ReleaseDate).Take(10)
+            query => query.Where(m=> m.VoteAverage > 8 && m.Adult.Equals(false)).OrderBy(m => m.ReleaseDate).Take(10)
                 .Select(m => new ReadMovieDto { Id = m.Id, Title = m.Title, Overview = m.Overview, VoteCount = m.VoteCount, VoteAverage = m.VoteAverage, ReleaseDate = m.ReleaseDate, Revenue = m.Revenue, RunTime = m.RunTime, Adult = m.Adult, Budget = m.Budget, PosterPhotoUrl = m.PosterPhotoUrl, BackPhotoUrl = m.BackPhotoUrl, OriginalLanguage = m.OriginalLanguage, Popularity = m.Popularity, Tagline = m.Tagline, KeyWords = m.KeyWords, Productions = m.Productions, Genres = m.Genres })
         );
         
