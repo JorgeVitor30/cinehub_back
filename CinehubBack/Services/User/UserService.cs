@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Net;
 using AutoMapper;
 using CinehubBack.Data;
@@ -28,6 +29,8 @@ public class UserService : IUserService
         var user = _mapper.Map<Model.User>(createUserDto);
         user.Role = Role.User;
         user.Password = _passwordEncoder.Encode(user.Password);
+        
+        CheckForDuplicate(u => u.Email  == user.Email, "User with this email already exists");
 
         _repository.Create(user);
         _repository.SaveChanges();
@@ -76,5 +79,19 @@ public class UserService : IUserService
     public void SaveChanges()
     {
         _repository.SaveChanges();
+    }
+    
+    private void CheckForDuplicate(Expression<Func<Model.User, bool>> predicate, string errorMessage)
+    {
+        var exists = _repository.Raw<Model.User?>(query => query.FirstOrDefault(predicate));
+
+        if (exists is not null)
+        {
+            throw new BaseException(
+                ErrorCode.BadRequest(),
+                HttpStatusCode.BadRequest,
+                errorMessage
+            );
+        }
     }
 }
