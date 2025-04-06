@@ -48,7 +48,7 @@ public class UserService : IUserService
                 query = query.Where(u => EF.Functions.Like(u.Name, $"%{name}%"));
 
             return query
-                .Select(u => new ReadUserDto { Id = u.Id, Email = u.Email, Name = u.Name });
+                .Select(u => new ReadUserDto { Id = u.Id, Email = u.Email, Name = u.Name, Role = u.Role.ToString() });
         }, parameter);
     }
 

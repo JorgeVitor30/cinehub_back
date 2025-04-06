@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using CinehubBack.Data.Auth;
 using CinehubBack.Encrypt;
@@ -35,5 +36,21 @@ public class AuthService : IAuthService
                 "Email or Password incorrects");
 
         return new ResponseLoginDto { Token = _tokenService.Generate(user.GetClaims()) };
+    }
+
+    public object Decode(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        if (handler.CanReadToken(token))
+        {
+            var jwtToken = handler.ReadJwtToken(token);
+            var claims = jwtToken.Claims.ToDictionary(c => c.Type, c => c.Value);
+
+            return claims;
+        }
+        else
+        {
+            throw new BaseException("400", HttpStatusCode.Unauthorized, "Token Invalido");
+        }
     }
 }

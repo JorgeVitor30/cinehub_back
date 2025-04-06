@@ -20,4 +20,10 @@ public class AuthController : ControllerBase
     {
         return Ok(_authService.Login(dto));
     }
+    
+    [HttpPost("decode")]
+    public IActionResult Decode([FromBody] DecodeDto decodeDto)
+    {
+        return Ok(_authService.Decode(decodeDto.Token));
+    }
 }
