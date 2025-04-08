@@ -107,4 +107,18 @@ public class UserService : IUserService
             );
         }
     }
+    
+    public void UploadPhoto(Guid id, IFormFile file)
+    {
+        var user = GetByIdOrThrow(id);
+        
+        if (file == null || file.Length == 0)
+            throw new BaseException(ErrorCode.BadRequest(), HttpStatusCode.BadRequest, "File is required");
+        
+        using var memoryStream = new MemoryStream();
+        file.CopyToAsync(memoryStream);
+        user.Photo = memoryStream.ToArray();
+        
+        _repository.SaveChanges();
+    }
 }

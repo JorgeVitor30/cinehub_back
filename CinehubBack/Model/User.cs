@@ -9,4 +9,5 @@ public class User : BaseEntity
     public required Role Role { get; set; }
     public required string Password { get; set; }
     public required bool VisibilityPublic { get; set; } = true;
+    public byte[]? Photo { get; set; } = null;
 }

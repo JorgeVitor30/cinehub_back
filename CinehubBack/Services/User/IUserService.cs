@@ -11,4 +11,5 @@ public interface IUserService
     ReadUserDto GetById(Guid id);
     Model.User? GetByEmail(string email);
     void Update(Guid id, UpdateUserDto updateUserDto);
+    void UploadPhoto(Guid id, IFormFile file);
 }
