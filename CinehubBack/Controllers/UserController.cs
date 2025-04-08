@@ -51,5 +51,13 @@ public class UserController : ControllerBase
         _service.Delete(id);
         return NoContent();
     }
+    
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "User, Admin")]
+    public IActionResult Update(Guid id, [FromBody] UpdateUserDto updateUserDto)
+    {
+        _service.Update(id, updateUserDto);
+        return NoContent();
+    }
 
 }

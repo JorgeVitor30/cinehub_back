@@ -10,4 +10,5 @@ public interface IUserService
     void Delete(Guid id);
     ReadUserDto GetById(Guid id);
     Model.User? GetByEmail(string email);
+    void Update(Guid id, UpdateUserDto updateUserDto);
 }

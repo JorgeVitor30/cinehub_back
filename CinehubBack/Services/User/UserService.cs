@@ -75,6 +75,19 @@ public class UserService : IUserService
                    "User not found"
                );
     }
+    
+    public void Update(Guid id, UpdateUserDto updateUserDto)
+    {
+        var user = GetByIdOrThrow(id);
+        user.Password = _passwordEncoder.Encode(updateUserDto.Password) ?? user.Password;
+        user.VisibilityPublic = updateUserDto.VisibilityPublic;
+        user.Email = updateUserDto.Email ?? user.Email;
+        user.Name = updateUserDto.Name ?? user.Name;
+
+        CheckForDuplicate(u => u.Email == user.Email && u.Id != id, "User with this email already exists");
+        _repository.Update(user);
+        _repository.SaveChanges();
+    }
 
     public void SaveChanges()
     {
