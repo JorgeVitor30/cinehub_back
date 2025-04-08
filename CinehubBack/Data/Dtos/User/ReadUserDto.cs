@@ -7,4 +7,5 @@ public class ReadUserDto
     public required string Email { get; set; }
     public required string Role { get; set; }
     public required bool VisibilityPublic { get; set; }
+    public string? Photo { get; set; }
 }

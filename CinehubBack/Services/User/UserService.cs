@@ -63,7 +63,14 @@ public class UserService : IUserService
 
     public ReadUserDto GetById(Guid id)
     {
-        return _mapper.Map<ReadUserDto>(GetByIdOrThrow(id));
+        var user = GetByIdOrThrow(id);
+        var readUserDto = _mapper.Map<ReadUserDto>(user);
+        if (user.Photo != null)
+        {
+            readUserDto.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(user.Photo)}";
+        }
+        
+        return readUserDto;
     }
 
     private Model.User GetByIdOrThrow(Guid id)
