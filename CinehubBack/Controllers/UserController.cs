@@ -60,7 +60,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("photo/{id:guid}")]
+    [HttpPost("{id:guid}/photo")]
     [Authorize(Roles = "User, Admin")]
     public IActionResult UploadPhoto(Guid id,[FromForm] IFormFile file)
     {
