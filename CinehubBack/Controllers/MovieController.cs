@@ -25,6 +25,7 @@ public class MovieController: ControllerBase
         return CreatedAtAction(nameof(GetById), new { readMovieDto.Id }, readMovieDto);
     }
     
+    [Authorize(Roles = "Admin, User")]
     [HttpGet]
     public IActionResult GetAll([FromQuery] string? title, [FromQuery] string? genre = null, [FromQuery] decimal note = 0, [FromQuery] int size = 10, [FromQuery] int page = 0)
     {
