@@ -59,6 +59,13 @@ public class UserController : ControllerBase
         _service.Update(id, updateUserDto);
         return NoContent();
     }
+    
+    [HttpPatch("{id:guid}/password")]
+    public IActionResult ChangePassword(Guid id, [FromBody] ChangePasswordDto changePasswordDto)
+    {
+        _service.ChangePassword(id, changePasswordDto);
+        return NoContent();
+    }
 
     [HttpPost("{id:guid}/photo")]
     [Authorize(Roles = "User, Admin")]

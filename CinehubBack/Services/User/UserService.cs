@@ -90,7 +90,6 @@ public class UserService : IUserService
     public void Update(Guid id, UpdateUserDto updateUserDto)
     {
         var user = GetByIdOrThrow(id);
-        user.Password = _passwordEncoder.Encode(updateUserDto.Password) ?? user.Password;
         user.VisibilityPublic = updateUserDto.VisibilityPublic;
         user.Email = updateUserDto.Email ?? user.Email;
         user.Name = updateUserDto.Name ?? user.Name;
@@ -130,6 +129,22 @@ public class UserService : IUserService
         file.CopyToAsync(memoryStream);
         user.Photo = memoryStream.ToArray();
         
+        _repository.SaveChanges();
+    }
+
+    public void ChangePassword(Guid id, ChangePasswordDto changePasswordDto)
+    {
+        var user = GetByIdOrThrow(id);
+        if (!_passwordEncoder.Verify(changePasswordDto.LastPassword, user.Password))
+        {
+            throw new BaseException(
+                ErrorCode.BadRequest(),
+                HttpStatusCode.BadRequest,
+                "Wrong password"
+            );
+        }
+
+        user.Password = _passwordEncoder.Encode(changePasswordDto.NewPassword);
         _repository.SaveChanges();
     }
 }

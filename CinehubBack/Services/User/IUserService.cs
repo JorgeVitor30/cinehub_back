@@ -12,4 +12,5 @@ public interface IUserService
     Model.User? GetByEmail(string email);
     void Update(Guid id, UpdateUserDto updateUserDto);
     void UploadPhoto(Guid id, IFormFile file);
+    void ChangePassword(Guid id, ChangePasswordDto changePasswordDto);
 }
