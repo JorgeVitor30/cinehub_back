@@ -51,7 +51,11 @@ public class UserService : IUserService
                 query = query.Where(u => EF.Functions.Like(u.Name, $"%{name}%"));
 
             return query
-                .Select(u => new ReadUserDto { Id = u.Id, Email = u.Email, Name = u.Name, Role = u.Role.ToString(), VisibilityPublic = u.VisibilityPublic });
+                .Select(u => new ReadUserDto
+                {
+                    Id = u.Id, Email = u.Email, Name = u.Name, Role = u.Role.ToString(), VisibilityPublic = u.VisibilityPublic, CreatedAt = u.CreatedAt,
+                    Photo = u.Photo != null ? $"data:image/jpeg;base64,{Convert.ToBase64String(u.Photo)}" : null
+                });
         }, parameter);
     }
 

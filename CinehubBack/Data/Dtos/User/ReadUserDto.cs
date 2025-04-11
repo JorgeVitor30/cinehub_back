@@ -8,4 +8,5 @@ public class ReadUserDto
     public required string Role { get; set; }
     public required bool VisibilityPublic { get; set; }
     public string? Photo { get; set; }
+    public required DateTime CreatedAt { get; set; }
 }
