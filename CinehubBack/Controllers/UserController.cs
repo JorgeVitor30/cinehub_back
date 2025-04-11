@@ -61,6 +61,7 @@ public class UserController : ControllerBase
     }
     
     [HttpPatch("{id:guid}/password")]
+    [Authorize(Roles = "User, Admin")]
     public IActionResult ChangePassword(Guid id, [FromBody] ChangePasswordDto changePasswordDto)
     {
         _service.ChangePassword(id, changePasswordDto);
