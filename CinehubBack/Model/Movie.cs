@@ -52,5 +52,7 @@ namespace CinehubBack.Model
         
         [JsonPropertyName("genres")]
         public required string Genres { get; set; }
+        
+        public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();
     }
 }

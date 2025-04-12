@@ -10,4 +10,6 @@ public class User : BaseEntity
     public required string Password { get; set; }
     public required bool VisibilityPublic { get; set; } = true;
     public byte[]? Photo { get; set; } = null;
+    
+    public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();
 }
