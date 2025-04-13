@@ -1,3 +1,5 @@
+using CinehubBack.Data.Movie;
+
 namespace CinehubBack.Data.Dtos.User;
 
 public class ReadUserDto
@@ -9,4 +11,5 @@ public class ReadUserDto
     public required bool VisibilityPublic { get; set; }
     public string? Photo { get; set; }
     public required DateTime CreatedAt { get; set; }
+    public required List<ReadMovieDto> Favorites { get; set; } = new();
 }

@@ -3,6 +3,7 @@ using System.Net;
 using AutoMapper;
 using CinehubBack.Data;
 using CinehubBack.Data.Dtos.User;
+using CinehubBack.Data.Movie;
 using CinehubBack.Encrypt;
 using CinehubBack.Expections;
 using CinehubBack.Model;
@@ -51,10 +52,41 @@ public class UserService : IUserService
                 query = query.Where(u => EF.Functions.Like(u.Name, $"%{name}%"));
 
             return query
+                .Include(u => u.Favorites)
+                .ThenInclude(f => f.Movie)
                 .Select(u => new ReadUserDto
                 {
-                    Id = u.Id, Email = u.Email, Name = u.Name, Role = u.Role.ToString(), VisibilityPublic = u.VisibilityPublic, CreatedAt = u.CreatedAt,
-                    Photo = u.Photo != null ? $"data:image/jpeg;base64,{Convert.ToBase64String(u.Photo)}" : null
+                    Id = u.Id,
+                    Email = u.Email,
+                    Name = u.Name,
+                    Role = u.Role.ToString(),
+                    VisibilityPublic = u.VisibilityPublic,
+                    CreatedAt = u.CreatedAt,
+                    Photo = u.Photo != null ? $"data:image/jpeg;base64,{Convert.ToBase64String(u.Photo)}" : null,
+                    Favorites = u.Favorites
+                        .Where(f => f.Movie != null)
+                        .Select(f => new ReadMovieDto
+                        {
+                            Id = f.Movie.Id,
+                            Title = f.Movie.Title, 
+                            Overview = f.Movie.Overview,
+                            VoteCount = f.Movie.VoteCount,
+                            VoteAverage = f.Movie.VoteAverage,
+                            ReleaseDate = f.Movie.ReleaseDate,
+                            Revenue = f.Movie.Revenue,
+                            RunTime = f.Movie.RunTime,
+                            Adult = f.Movie.Adult,
+                            Budget = f.Movie.Budget,
+                            PosterPhotoUrl = f.Movie.PosterPhotoUrl,
+                            BackPhotoUrl = f.Movie.BackPhotoUrl,
+                            OriginalLanguage = f.Movie.OriginalLanguage,
+                            Popularity = f.Movie.Popularity,
+                            Tagline = f.Movie.Tagline,
+                            KeyWords = f.Movie.KeyWords,
+                            Productions = f.Movie.Productions,
+                            Genres = f.Movie.Genres
+                        })
+                        .ToList()
                 });
         }, parameter);
     }
@@ -67,13 +99,26 @@ public class UserService : IUserService
 
     public ReadUserDto GetById(Guid id)
     {
-        var user = GetByIdOrThrow(id);
+        var user = _repository.Raw(query => query
+            .Include(u => u.Favorites)
+            .ThenInclude(f => f.Movie)
+            .FirstOrDefault(u => u.Id == id)
+        );
+        if (user is null)
+        {  
+            throw new Exception("Usuário não encontrado");
+        }
         var readUserDto = _mapper.Map<ReadUserDto>(user);
         if (user.Photo != null)
         {
             readUserDto.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(user.Photo)}";
         }
         
+        readUserDto.Favorites = user.Favorites
+            .Where(f => f.Movie != null)
+            .Select(f => _mapper.Map<ReadMovieDto>(f.Movie))
+            .ToList();
+
         return readUserDto;
     }
 
