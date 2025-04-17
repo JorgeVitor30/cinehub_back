@@ -1,4 +1,6 @@
 using CinehubBack.Data.Movie;
+using CinehubBack.Middlewares.Auth;
+using CinehubBack.Services.Auth;
 using CinehubBack.Services.Movie;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +13,14 @@ namespace CinehubBack.Controllers;
 public class MovieController: ControllerBase
 {
     private readonly IMovieService _service;
+    private readonly ITokenService _tokenService;
 
-    public MovieController(IMovieService service)
+    public MovieController(IMovieService service, ITokenService tokenService)
     {
         _service = service;
+        _tokenService = tokenService;
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpPost]
     public IActionResult Create([FromBody] CreateMovieDto createMovieDto)
@@ -29,11 +33,13 @@ public class MovieController: ControllerBase
     [HttpGet]
     public IActionResult GetAll([FromQuery] string? title, [FromQuery] string? genre = null, [FromQuery] decimal note = 0, [FromQuery] int size = 10, [FromQuery] int page = 0)
     {
+        var token = BearerHandler.ExtractTokenFromHeader(Request.Headers);
+        var userId = _tokenService.GetUserIdFromToken(token);
         var parameter = new Parameter {
             Page = page, Size = size,
             Args = new Dictionary<string, object?> { {"title", title}, {"genre", genre}, {"note", note} }
         };
-        return Ok(_service.GetAll(parameter));
+        return Ok(_service.GetAll(parameter, userId));
     }
     
     [HttpGet("home")]

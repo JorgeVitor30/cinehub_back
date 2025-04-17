@@ -59,7 +59,7 @@ public class BearerHandler : AuthenticationHandler<AuthenticationSchemeOptions>
         return isHealthPath;
     }
 
-    private static string ExtractTokenFromHeader(IHeaderDictionary headers)
+    public static string? ExtractTokenFromHeader(IHeaderDictionary headers)
     {
         var authorizationHeader = headers["Authorization"];
 

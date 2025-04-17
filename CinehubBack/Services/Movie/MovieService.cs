@@ -4,6 +4,7 @@ using AutoMapper;
 using CinehubBack.Data;
 using CinehubBack.Data.Movie;
 using CinehubBack.Expections;
+using CinehubBack.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinehubBack.Services.Movie;
@@ -12,11 +13,13 @@ public class MovieService: IMovieService
 {
     private readonly IRepository<Model.Movie> _repository;
     private readonly IMapper _mapper;
+    private readonly IRepository<Favorites> _favoritesRepository;
 
-    public MovieService(IRepository<Model.Movie> repository, IMapper mapper)
+    public MovieService(IRepository<Model.Movie> repository, IMapper mapper, IRepository<Favorites> favoritesRepository)
     {
         _repository = repository;
         _mapper = mapper;
+        _favoritesRepository = favoritesRepository;
     }
     
     public ReadMovieDto Create(CreateMovieDto createMovieDto)
@@ -31,7 +34,7 @@ public class MovieService: IMovieService
         return _mapper.Map<ReadMovieDto>(movie);
     }
 
-    public Page<ReadMovieDto> GetAll(Parameter parameter)
+    public Page<ReadMovieDto> GetAll(Parameter parameter, string userId)
     {
         return _repository.GetAll<ReadMovieDto>(query =>
         {
@@ -50,6 +53,11 @@ public class MovieService: IMovieService
             {
                 query = query.Where(m => m.VoteAverage >= note);
             }
+            if (Guid.TryParse(userId, out var userGuid))
+            {
+                query = query.Where(m => !_favoritesRepository.Queryable.Where(f => f.UserId == userGuid)
+                    .Any(f => f.UserId == userGuid && f.MovieId == m.Id));
+            } else { throw new BaseException(ErrorCode.BadRequest(), HttpStatusCode.BadRequest, "UserId is not valid");}   
             
             return query.Select(m => new ReadMovieDto {Id = m.Id, Title = m.Title, Overview = m.Overview, VoteCount = m.VoteCount, VoteAverage = m.VoteAverage, ReleaseDate = m.ReleaseDate, Revenue = m.Revenue, RunTime = m.RunTime, Adult = m.Adult, Budget = m.Budget, PosterPhotoUrl = m.PosterPhotoUrl, BackPhotoUrl = m.BackPhotoUrl, OriginalLanguage = m.OriginalLanguage, Popularity = m.Popularity, Tagline = m.Tagline, KeyWords = m.KeyWords, Productions = m.Productions, Genres = m.Genres});
         }, parameter);
