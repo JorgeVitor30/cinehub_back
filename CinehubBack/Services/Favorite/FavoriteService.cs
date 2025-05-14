@@ -45,4 +45,16 @@ public class FavoriteService: IFavoriteService
         _repository.SaveChanges();
         return _mapper.Map<ReadFavoriteDto>(favorite);
     }
+
+    public void DeleteFavorite(DeleteFavoriteDto deleteFavoriteDto)
+    {
+        var favorite = _repository.Raw(query => query.FirstOrDefault(f => f.UserId == deleteFavoriteDto.UserId && f.MovieId == deleteFavoriteDto.MovieId));
+        if (favorite == null)
+        {
+            throw new BaseException(ErrorCode.BadRequest(), HttpStatusCode.BadRequest, "Movie not Favorited");
+        }
+        
+        _repository.Delete(favorite);
+        _repository.SaveChanges();
+    }
 }

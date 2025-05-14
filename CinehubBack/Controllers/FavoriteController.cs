@@ -16,9 +16,15 @@ public class FavoriteController: ControllerBase
         _favoriteService = favoriteService;
     }
     
-    [HttpPost("favorite")]
+    [HttpPost("/api/favorite")]
     public IActionResult Favorite([FromBody] CreateFavoriteDto createFavoriteDto)
     {
         return Ok(_favoriteService.CreateFavorite(createFavoriteDto));
+    }
+    
+    [HttpDelete("/api/favorite")]
+    public void Delete([FromBody] DeleteFavoriteDto deleteFavoriteDto)
+    {
+        _favoriteService.DeleteFavorite(deleteFavoriteDto);
     }
 }
