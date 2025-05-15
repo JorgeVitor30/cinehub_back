@@ -54,5 +54,6 @@ namespace CinehubBack.Model
         public required string Genres { get; set; }
         
         public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();
+        public ICollection<Rate> Rates { get; set; } = new List<Rate>();
     }
 }

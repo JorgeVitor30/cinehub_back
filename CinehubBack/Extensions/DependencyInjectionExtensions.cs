@@ -6,6 +6,7 @@ using CinehubBack.Model;
 using CinehubBack.Services.Auth;
 using CinehubBack.Services.Favorite;
 using CinehubBack.Services.Movie;
+using CinehubBack.Services.Rate;
 using CinehubBack.Services.User;
 using Microsoft.AspNetCore.Authentication;
 
@@ -25,6 +26,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMovieService, MovieService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
+        services.AddScoped<IRateService, RateService>();
 
         services.AddSingleton<ITokenService, JwtService>();
         services.AddSingleton<IPasswordEncoder, BCryptEncoder>();

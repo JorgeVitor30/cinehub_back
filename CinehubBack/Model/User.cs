@@ -12,4 +12,5 @@ public class User : BaseEntity
     public byte[]? Photo { get; set; } = null;
     
     public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();
+    public ICollection<Rate> Rates { get; set; } = new List<Rate>();
 }
