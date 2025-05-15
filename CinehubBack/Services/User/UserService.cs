@@ -4,6 +4,7 @@ using AutoMapper;
 using CinehubBack.Data;
 using CinehubBack.Data.Dtos.User;
 using CinehubBack.Data.Movie;
+using CinehubBack.Data.Rate;
 using CinehubBack.Encrypt;
 using CinehubBack.Expections;
 using CinehubBack.Model;
@@ -15,12 +16,16 @@ public class UserService : IUserService
 {
 
     private readonly IRepository<Model.User> _repository;
+    private readonly IRepository<Model.Rate> _rateRepository;
+    private readonly IRepository<Model.Movie> _movieRepository;
     private readonly IMapper _mapper;
     private readonly IPasswordEncoder _passwordEncoder;
 
-    public UserService(IRepository<Model.User> repository, IMapper mapper, IPasswordEncoder passwordEncoder)
+    public UserService(IRepository<Model.User> repository, IMapper mapper, IPasswordEncoder passwordEncoder, IRepository<Model.Rate> rateRepository, IRepository<Model.Movie> movieRepository)
     {
         _repository = repository;
+        _rateRepository = rateRepository;
+        _movieRepository = movieRepository;
         _mapper = mapper;
         _passwordEncoder = passwordEncoder;
     }
@@ -86,7 +91,8 @@ public class UserService : IUserService
                             Productions = f.Movie.Productions,
                             Genres = f.Movie.Genres
                         })
-                        .ToList()
+                        .ToList(),
+                    RatedList = null
                 });
         }, parameter);
     }
@@ -118,6 +124,31 @@ public class UserService : IUserService
             .Where(f => f.Movie != null)
             .Select(f => _mapper.Map<ReadMovieDto>(f.Movie))
             .ToList();
+
+        var ratedListDtoRate = new List<ReadRateDto?>();
+        
+        var ratedList = _rateRepository.Raw(q => q.Where(r=> r.UserId == id)).ToList();
+        if (ratedList.Count < 0)
+        {
+            ratedListDtoRate = null;
+        }
+        else
+        {
+            foreach (var rateEntity in ratedList)
+            {
+                var movie = _movieRepository.GetById(rateEntity.MovieId);
+                var movieDto = _mapper.Map<ReadMovieDto>(movie);
+                var rateDto = new ReadRateDto()
+                {
+                    Rate = rateEntity.RateValue,
+                    Comment = rateEntity.Comment,
+                    Movie = movieDto
+                };
+                ratedListDtoRate.Add(rateDto);
+            }
+        }
+        
+        readUserDto.RatedList = ratedListDtoRate;
 
         return readUserDto;
     }

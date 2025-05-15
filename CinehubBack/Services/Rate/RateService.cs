@@ -35,7 +35,7 @@ public class RateService: IRateService
             throw new BaseException("404", HttpStatusCode.NotFound, "User not found");
         }
         
-        if (createRateDto.Rate <= 0 || createRateDto.Rate > 10)
+        if (createRateDto.RateValue <= 0 || createRateDto.RateValue > 10)
         {
             throw new BaseException("400", HttpStatusCode.BadRequest, "Rate must be between 1 and 10");
         }

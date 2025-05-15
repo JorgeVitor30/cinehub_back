@@ -1,4 +1,5 @@
 using CinehubBack.Data.Movie;
+using CinehubBack.Data.Rate;
 
 namespace CinehubBack.Data.Dtos.User;
 
@@ -12,4 +13,5 @@ public class ReadUserDto
     public string? Photo { get; set; }
     public required DateTime CreatedAt { get; set; }
     public required List<ReadMovieDto> Favorites { get; set; } = new();
+    public required List<ReadRateDto?> RatedList { get; set; } = new();
 }
