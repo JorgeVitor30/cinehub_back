@@ -28,7 +28,6 @@
 </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\Dtos\Rate\" />
       <Folder Include="Migrations\" />
       <Folder Include="Utils\Docs\" />
     </ItemGroup>

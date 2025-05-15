@@ -1,6 +1,8 @@
 using CinehubBack.Data.Favorite;
+using CinehubBack.Data.Rate;
 using CinehubBack.Services.Auth;
 using CinehubBack.Services.Favorite;
+using CinehubBack.Services.Rate;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CinehubBack.Controllers;
@@ -10,17 +12,18 @@ namespace CinehubBack.Controllers;
 public class RateController: ControllerBase
 {
     private readonly IAuthService _authService; 
-    private readonly IFavoriteService _favoriteService;
+    private readonly IRateService _rateService;
     
-    public RateController(IAuthService authService, IFavoriteService favoriteService)
+    public RateController(IAuthService authService, IRateService rateService)
     {
         _authService = authService;
-        _favoriteService = favoriteService;
+        _rateService = rateService;
     }
     
-    // [HttpPost("/api/favorite")]
-    // public IActionResult Favorite([FromBody] CreateFavoriteDto createFavoriteDto)
-    // {
-    // }
+    [HttpPost("rate")]
+    public void CreateRate([FromBody] CreateRateDto createRateDto)
+    {
+        _rateService.CreateRate(createRateDto);
+    }
     
 }

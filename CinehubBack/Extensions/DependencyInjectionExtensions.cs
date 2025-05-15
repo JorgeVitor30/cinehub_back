@@ -38,6 +38,7 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IRepository<User>, BaseRepository<User>>();
         services.AddScoped<IRepository<Movie>, BaseRepository<Movie>>();
         services.AddScoped<IRepository<Favorites>, BaseRepository<Favorites>>();
+        services.AddScoped<IRepository<Rate>, BaseRepository<Rate>>();
     }
 
     private static void AddAdapters(IServiceCollection services) { }

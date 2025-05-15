@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CinehubBack.Data.Mapping;
 
-public class RateMapping: BaseMapping<Rate>
+public class RateMapping: BaseMapping<Model.Rate>
 {
-    public override void Setup(EntityTypeBuilder<Rate> builder)
+    public override void Setup(EntityTypeBuilder<Model.Rate> builder)
     {
         builder.ToTable("rate");
     
