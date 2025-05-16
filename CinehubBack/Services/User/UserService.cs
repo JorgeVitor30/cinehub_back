@@ -128,7 +128,7 @@ public class UserService : IUserService
         var ratedListDtoRate = new List<ReadRateDto?>();
         
         var ratedList = _rateRepository.Raw(q => q.Where(r=> r.UserId == id)).ToList();
-        if (ratedList.Count < 0)
+        if (ratedList.Count < 1)
         {
             ratedListDtoRate = null;
         }
