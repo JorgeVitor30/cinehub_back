@@ -9,5 +9,6 @@ public class RateProfile: Profile
     public RateProfile()
     {
         CreateMap<CreateRateDto, Rate>();
+        CreateMap<UpdateRateDto, Rate>();
     }
 }

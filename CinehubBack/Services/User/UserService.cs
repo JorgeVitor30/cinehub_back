@@ -142,7 +142,8 @@ public class UserService : IUserService
                 {
                     Rate = rateEntity.RateValue,
                     Comment = rateEntity.Comment,
-                    Movie = movieDto
+                    Movie = movieDto,
+                    Id = rateEntity.Id,
                 };
                 ratedListDtoRate.Add(rateDto);
             }

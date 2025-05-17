@@ -20,10 +20,16 @@ public class RateController: ControllerBase
         _rateService = rateService;
     }
     
-    [HttpPost("rate")]
+    [HttpPost]
     public void CreateRate([FromBody] CreateRateDto createRateDto)
     {
         _rateService.CreateRate(createRateDto);
+    }
+
+    [HttpPut("{rateId:guid}")]
+    public void UpdateRate([FromBody] UpdateRateDto updateRateDto, Guid rateId)
+    {
+        _rateService.UpdateRate(updateRateDto, rateId);
     }
     
 }

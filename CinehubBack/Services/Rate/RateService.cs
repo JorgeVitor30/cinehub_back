@@ -50,4 +50,17 @@ public class RateService: IRateService
         _repository.Create(rateEntity);
         _repository.SaveChanges();
     }
+
+    public void UpdateRate(UpdateRateDto updateRateDto, Guid rateId)
+    {
+       var rate =  _repository.GetById(rateId);
+       if (rate is null)
+       {
+           throw new BaseException("404", HttpStatusCode.NotFound, "Rate not found");
+       }
+       
+       _mapper.Map(updateRateDto, rate);
+       _repository.Update(rate);
+       _repository.SaveChanges();
+    }
 }
