@@ -14,10 +14,12 @@ public class MovieService: IMovieService
     private readonly IRepository<Model.Movie> _repository;
     private readonly IMapper _mapper;
     private readonly IRepository<Favorites> _favoritesRepository;
-
-    public MovieService(IRepository<Model.Movie> repository, IMapper mapper, IRepository<Favorites> favoritesRepository)
+    private readonly IRepository<Model.Rate> _rateRepository;
+        
+    public MovieService(IRepository<Model.Movie> repository, IMapper mapper, IRepository<Favorites> favoritesRepository, IRepository<Model.Rate> rateRepository)
     {
         _repository = repository;
+        _rateRepository = rateRepository;
         _mapper = mapper;
         _favoritesRepository = favoritesRepository;
     }
@@ -57,6 +59,8 @@ public class MovieService: IMovieService
             {
                 query = query.Where(m => !_favoritesRepository.Queryable.Where(f => f.UserId == userGuid)
                     .Any(f => f.UserId == userGuid && f.MovieId == m.Id));
+                
+                query = query.Where(m => !_rateRepository.Queryable.Where(r => r.UserId == userGuid).Any(r => r.MovieId == m.Id));
             } else { throw new BaseException(ErrorCode.BadRequest(), HttpStatusCode.BadRequest, "UserId is not valid");}   
             
             return query.Select(m => new ReadMovieDto {Id = m.Id, Title = m.Title, Overview = m.Overview, VoteCount = m.VoteCount, VoteAverage = m.VoteAverage, ReleaseDate = m.ReleaseDate, Revenue = m.Revenue, RunTime = m.RunTime, Adult = m.Adult, Budget = m.Budget, PosterPhotoUrl = m.PosterPhotoUrl, BackPhotoUrl = m.BackPhotoUrl, OriginalLanguage = m.OriginalLanguage, Popularity = m.Popularity, Tagline = m.Tagline, KeyWords = m.KeyWords, Productions = m.Productions, Genres = m.Genres});
