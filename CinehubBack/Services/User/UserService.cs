@@ -103,7 +103,7 @@ public class UserService : IUserService
             query => query.FirstOrDefault(u => u.Email.Equals(email)));
     }
 
-    public ReadUserDto GetById(Guid id)
+    public ReadUserByIdDto GetById(Guid id)
     {
         var user = _repository.Raw(query => query
             .Include(u => u.Favorites)
@@ -114,7 +114,7 @@ public class UserService : IUserService
         {  
             throw new Exception("Usuário não encontrado");
         }
-        var readUserDto = _mapper.Map<ReadUserDto>(user);
+        var readUserDto = _mapper.Map<ReadUserByIdDto>(user);
         if (user.Photo != null)
         {
             readUserDto.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(user.Photo)}";

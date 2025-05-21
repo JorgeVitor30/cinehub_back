@@ -14,5 +14,7 @@ public class UserProfile : Profile
             .ForMember(dest => dest.Favorites, opt => opt.Ignore());
         CreateMap<UpdateUserDto, User>();
         CreateMap<Movie, ReadMovieDto>();
+        CreateMap<User, ReadUserByIdDto>()
+            .ForMember(dest => dest.Favorites, opt => opt.Ignore());
     }
 }
