@@ -126,7 +126,7 @@ public class UserService : IUserService
             .ToList();
 
         var ratedListDtoRate = new List<ReadRateDto?>();
-        
+        string mostCommonGenre = "Em Breve";
         var ratedList = _rateRepository.Raw(q => q.Where(r=> r.UserId == id)).ToList();
         if (ratedList.Count < 1)
         {
@@ -134,9 +134,22 @@ public class UserService : IUserService
         }
         else
         {
+            Dictionary<string, int> genreCount = new Dictionary<string, int>();
             foreach (var rateEntity in ratedList)
             {
                 var movie = _movieRepository.GetById(rateEntity.MovieId);
+                foreach (var genre in movie.Genres.Split(","))
+                {
+                    if (genreCount.ContainsKey(genre))
+                    {
+                        genreCount[genre]++;
+                    }
+                    else
+                    {
+                        genreCount[genre] = 1;
+                    }
+                }
+                mostCommonGenre = genreCount.OrderByDescending(g => g.Value).FirstOrDefault().Key;
                 var movieDto = _mapper.Map<ReadMovieDto>(movie);
                 var rateDto = new ReadRateDto()
                 {
@@ -150,6 +163,7 @@ public class UserService : IUserService
         }
         
         readUserDto.RatedList = ratedListDtoRate;
+        readUserDto.Genre = mostCommonGenre;
 
         return readUserDto;
     }

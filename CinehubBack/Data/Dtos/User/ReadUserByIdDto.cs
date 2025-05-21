@@ -12,6 +12,7 @@ public class ReadUserByIdDto
     public required bool VisibilityPublic { get; set; }
     public string? Photo { get; set; }
     public required DateTime CreatedAt { get; set; }
+    public required string Genre { get; set; }
     public required List<ReadMovieDto> Favorites { get; set; } = new();
     public required List<ReadRateDto?> RatedList { get; set; } = new();
 }
