@@ -31,13 +31,27 @@ public class MovieController: ControllerBase
     
     [Authorize(Roles = "Admin, User")]
     [HttpGet]
-    public IActionResult GetAll([FromQuery] string? title, [FromQuery] string? genre = null, [FromQuery] decimal note = 0, [FromQuery] int size = 10, [FromQuery] int page = 0)
+    public IActionResult GetAll(
+        [FromQuery] string? title,
+        [FromQuery] string? genre = null,
+        [FromQuery] decimal note = 0,
+        [FromQuery] string? sortBy = null,
+        [FromQuery] string? sortOrder = null,
+        [FromQuery] int size = 10,
+        [FromQuery] int page = 0)
     {
         var token = BearerHandler.ExtractTokenFromHeader(Request.Headers);
         var userId = _tokenService.GetUserIdFromToken(token);
         var parameter = new Parameter {
-            Page = page, Size = size,
-            Args = new Dictionary<string, object?> { {"title", title}, {"genre", genre}, {"note", note} }
+            Page = page,
+            Size = size,
+            Args = new Dictionary<string, object?> {
+                {"title", title},
+                {"genre", genre},
+                {"note", note},
+                {"sortBy", sortBy},
+                {"sortOrder", sortOrder}
+            }
         };
         return Ok(_service.GetAll(parameter, userId));
     }
