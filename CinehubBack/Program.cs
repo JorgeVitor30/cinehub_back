@@ -1,7 +1,7 @@
 using CinehubBack.Data;
 using CinehubBack.Extensions;
 using CinehubBack.Middlewares;
-using CinehubBack.Model;
+using CinehubBack.Services.ImgBBService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -38,6 +38,12 @@ builder.Services.AddDependencies();
 builder.Services.AddCustomAuthorization();
 builder.Services.AddCustomAuthentication();
 builder.Services.AddScoped<SeedingData>();
+builder.Services.AddHttpClient<IImageUploadService, ImgBBImageUploadService>()
+    .ConfigureHttpClient((serviceProvider, client) =>
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var apiKey = configuration["ImgBB:ApiKey"] ?? throw new ArgumentNullException("ImgBB:ApiKey não configurada.");
+    });
 
 builder.Services.AddSwaggerGen(options =>
 {

@@ -62,4 +62,11 @@ public class MovieController: ControllerBase
         _service.DeleteById(id);
         return NoContent();
     }
+
+    [HttpPost("{id:guid}/photo")]
+    [Authorize(Roles = "Admin")]
+    public IActionResult Create(Guid id, [FromForm] AddMoviePhotosDto addMoviePhotos)
+    {
+        return Ok(_service.AddPhotoMovies(id, addMoviePhotos));
+    }
 }

@@ -15,13 +15,15 @@ public class MovieService: IMovieService
     private readonly IMapper _mapper;
     private readonly IRepository<Favorites> _favoritesRepository;
     private readonly IRepository<Model.Rate> _rateRepository;
+    private readonly IImageUploadService _imageUploadService;
         
-    public MovieService(IRepository<Model.Movie> repository, IMapper mapper, IRepository<Favorites> favoritesRepository, IRepository<Model.Rate> rateRepository)
+    public MovieService(IRepository<Model.Movie> repository, IMapper mapper, IRepository<Favorites> favoritesRepository, IRepository<Model.Rate> rateRepository, IImageUploadService imageUploadService)
     {
         _repository = repository;
         _rateRepository = rateRepository;
         _mapper = mapper;
         _favoritesRepository = favoritesRepository;
+        _imageUploadService = imageUploadService;
     }
     
     public ReadMovieDto Create(CreateMovieDto createMovieDto)
@@ -120,5 +122,29 @@ public class MovieService: IMovieService
                 errorMessage
             );
         }
+    }
+
+    public ResponseUploadImgDto AddPhotoMovies(Guid id, AddMoviePhotosDto addMoviePhotos)
+    {
+        var movie = _repository.GetById(id);
+        if (movie is null)
+        {
+            throw new BaseException("404", HttpStatusCode.NotFound, "Movie not found");
+        }
+        
+        var responsePhotos = _imageUploadService.UploadImage(addMoviePhotos.PosterPhoto, addMoviePhotos.BackPhoto);
+        Console.Write(responsePhotos.BackPhotoUrl);
+        Console.Write(responsePhotos.PosterPhotoUrl);
+
+        movie.BackPhotoUrl = responsePhotos.BackPhotoUrl;
+        movie.PosterPhotoUrl = responsePhotos.PosterPhotoUrl;
+        _repository.Update(movie);
+        _repository.SaveChanges();
+        
+        return new ResponseUploadImgDto()
+        {
+            BackPhotoUrl = responsePhotos.BackPhotoUrl,
+            PosterPhotoUrl = responsePhotos.PosterPhotoUrl,
+        };
     }
 }

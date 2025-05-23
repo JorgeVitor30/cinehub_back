@@ -10,4 +10,5 @@ public interface IMovieService
     ReadMovieDto GetById(Guid id);
     ReadHomeMovieDto GetHome();
     void DeleteById(Guid id);
+    ResponseUploadImgDto AddPhotoMovies(Guid id, AddMoviePhotosDto addMoviePhotos);
 }
