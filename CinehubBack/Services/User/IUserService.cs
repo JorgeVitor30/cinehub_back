@@ -11,6 +11,6 @@ public interface IUserService
     ReadUserByIdDto GetById(Guid id);
     Model.User? GetByEmail(string email);
     void Update(Guid id, UpdateUserDto updateUserDto);
-    void UploadPhoto(Guid id, IFormFile file);
+    Task UploadPhoto(Guid id, IFormFile file);
     void ChangePassword(Guid id, ChangePasswordDto changePasswordDto);
 }

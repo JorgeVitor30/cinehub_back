@@ -70,9 +70,9 @@ public class UserController : ControllerBase
 
     [HttpPost("{id:guid}/photo")]
     [Authorize(Roles = "User, Admin")]
-    public IActionResult UploadPhoto(Guid id,[FromForm] IFormFile file)
+    public async Task<IActionResult> UploadPhoto(Guid id,[FromForm] IFormFile file)
     {
-        _service.UploadPhoto(id, file);
+        await _service.UploadPhoto(id, file);
         return NoContent();
     }
 }
