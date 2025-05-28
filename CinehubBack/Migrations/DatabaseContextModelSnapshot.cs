@@ -22,6 +22,205 @@ namespace CinehubBack.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("CinehubBack.Model.Favorites", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("MovieId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("movie_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedAt"));
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
+
+                    b.HasKey("UserId", "MovieId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("favorites", (string)null);
+                });
+
+            modelBuilder.Entity("CinehubBack.Model.Movie", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Adult")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("adult")
+                        .HasAnnotation("Relational:JsonPropertyName", "adult");
+
+                    b.Property<string>("BackPhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("backdrop_path")
+                        .HasAnnotation("Relational:JsonPropertyName", "backdrop_path");
+
+                    b.Property<decimal>("Budget")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("budget")
+                        .HasAnnotation("Relational:JsonPropertyName", "budget");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedAt"));
+
+                    b.Property<string>("Genres")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("genres")
+                        .HasAnnotation("Relational:JsonPropertyName", "genres");
+
+                    b.Property<string>("KeyWords")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("keywords")
+                        .HasAnnotation("Relational:JsonPropertyName", "keywords");
+
+                    b.Property<string>("OriginalLanguage")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("original_language")
+                        .HasAnnotation("Relational:JsonPropertyName", "original_language");
+
+                    b.Property<string>("Overview")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("overview")
+                        .HasAnnotation("Relational:JsonPropertyName", "overview");
+
+                    b.Property<decimal>("Popularity")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("popularity")
+                        .HasAnnotation("Relational:JsonPropertyName", "popularity");
+
+                    b.Property<string>("PosterPhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("poster_path")
+                        .HasAnnotation("Relational:JsonPropertyName", "poster_path");
+
+                    b.Property<string>("Productions")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("productions")
+                        .HasAnnotation("Relational:JsonPropertyName", "production_companies");
+
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("release_date")
+                        .HasAnnotation("Relational:JsonPropertyName", "release_date");
+
+                    b.Property<decimal>("Revenue")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("revenue")
+                        .HasAnnotation("Relational:JsonPropertyName", "revenue");
+
+                    b.Property<int>("RunTime")
+                        .HasColumnType("int")
+                        .HasColumnName("runtime")
+                        .HasAnnotation("Relational:JsonPropertyName", "runtime");
+
+                    b.Property<string>("Tagline")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("tagline")
+                        .HasAnnotation("Relational:JsonPropertyName", "tagline");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("title")
+                        .HasAnnotation("Relational:JsonPropertyName", "title");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
+
+                    b.Property<decimal>("VoteAverage")
+                        .HasColumnType("decimal(65,30)")
+                        .HasColumnName("vote_average")
+                        .HasAnnotation("Relational:JsonPropertyName", "vote_average");
+
+                    b.Property<int>("VoteCount")
+                        .HasColumnType("int")
+                        .HasColumnName("vote_count")
+                        .HasAnnotation("Relational:JsonPropertyName", "vote_count");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("movie", (string)null);
+                });
+
+            modelBuilder.Entity("CinehubBack.Model.Rate", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("user_id");
+
+                    b.Property<Guid>("MovieId")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("movie_id");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("comment");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<DateTime>("CreatedAt"));
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
+                        .HasColumnName("id");
+
+                    b.Property<int>("RateValue")
+                        .HasColumnType("int")
+                        .HasColumnName("rate_value");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
+
+                    b.HasKey("UserId", "MovieId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("rate", (string)null);
+                });
+
             modelBuilder.Entity("CinehubBack.Model.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -51,6 +250,10 @@ namespace CinehubBack.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("password");
 
+                    b.Property<byte[]>("Photo")
+                        .HasColumnType("longblob")
+                        .HasColumnName("photo");
+
                     b.Property<int>("Role")
                         .HasColumnType("int")
                         .HasColumnName("role");
@@ -62,9 +265,65 @@ namespace CinehubBack.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime>("UpdatedAt"));
 
+                    b.Property<bool>("VisibilityPublic")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("visibility_public");
+
                     b.HasKey("Id");
 
                     b.ToTable("user", (string)null);
+                });
+
+            modelBuilder.Entity("CinehubBack.Model.Favorites", b =>
+                {
+                    b.HasOne("CinehubBack.Model.Movie", "Movie")
+                        .WithMany("Favorites")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CinehubBack.Model.User", "User")
+                        .WithMany("Favorites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CinehubBack.Model.Rate", b =>
+                {
+                    b.HasOne("CinehubBack.Model.Movie", "Movie")
+                        .WithMany("Rates")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CinehubBack.Model.User", "User")
+                        .WithMany("Rates")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CinehubBack.Model.Movie", b =>
+                {
+                    b.Navigation("Favorites");
+
+                    b.Navigation("Rates");
+                });
+
+            modelBuilder.Entity("CinehubBack.Model.User", b =>
+                {
+                    b.Navigation("Favorites");
+
+                    b.Navigation("Rates");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,7 @@
 using CinehubBack.Data;
 using CinehubBack.Extensions;
 using CinehubBack.Middlewares;
+using CinehubBack.Services.ImgBBService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -11,6 +12,18 @@ var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<DatabaseContext>(opts =>
 {
     opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") 
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        });
 });
 
 // Add services to the container.
@@ -24,6 +37,13 @@ builder.Services.AddControllers();
 builder.Services.AddDependencies();
 builder.Services.AddCustomAuthorization();
 builder.Services.AddCustomAuthentication();
+builder.Services.AddScoped<SeedingData>();
+builder.Services.AddHttpClient<IImageUploadService, ImgBBImageUploadService>()
+    .ConfigureHttpClient((serviceProvider, client) =>
+    {
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        var apiKey = configuration["ImgBB:ApiKey"] ?? throw new ArgumentNullException("ImgBB:ApiKey não configurada.");
+    });
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -73,8 +93,14 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-app.UseMiddleware<ExceptionMiddleware>();
+using (var scope = app.Services.CreateScope())
+{
+    var seedingData = scope.ServiceProvider.GetRequiredService<SeedingData>();
+    seedingData.Initialize();
+}
 
+app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 

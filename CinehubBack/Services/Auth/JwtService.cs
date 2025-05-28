@@ -66,4 +66,12 @@ public class JwtService : ITokenService
                 "It wasn't possible extract claims from token");
         }
     }
+    
+    public string? GetUserIdFromToken(string token)
+    {
+        var claims = ExtractFrom(token);
+        var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        return userId;
+    }
 }

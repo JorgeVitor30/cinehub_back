@@ -8,4 +8,9 @@ public class User : BaseEntity
     public required string Email { get; set; }
     public required Role Role { get; set; }
     public required string Password { get; set; }
+    public required bool VisibilityPublic { get; set; } = true;
+    public byte[]? Photo { get; set; } = null;
+    
+    public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();
+    public ICollection<Rate> Rates { get; set; } = new List<Rate>();
 }

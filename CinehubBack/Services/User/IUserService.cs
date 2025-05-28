@@ -8,6 +8,9 @@ public interface IUserService
     ReadUserDto Create(CreateUserDto createUserDto);
     Page<ReadUserDto> GetAll(Parameter parameter);
     void Delete(Guid id);
-    ReadUserDto GetById(Guid id);
+    ReadUserByIdDto GetById(Guid id);
     Model.User? GetByEmail(string email);
+    void Update(Guid id, UpdateUserDto updateUserDto);
+    Task UploadPhoto(Guid id, IFormFile file);
+    void ChangePassword(Guid id, ChangePasswordDto changePasswordDto);
 }

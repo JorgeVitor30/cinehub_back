@@ -51,5 +51,28 @@ public class UserController : ControllerBase
         _service.Delete(id);
         return NoContent();
     }
+    
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "User, Admin")]
+    public IActionResult Update(Guid id, [FromBody] UpdateUserDto updateUserDto)
+    {
+        _service.Update(id, updateUserDto);
+        return NoContent();
+    }
+    
+    [HttpPatch("{id:guid}/password")]
+    [Authorize(Roles = "User, Admin")]
+    public IActionResult ChangePassword(Guid id, [FromBody] ChangePasswordDto changePasswordDto)
+    {
+        _service.ChangePassword(id, changePasswordDto);
+        return NoContent();
+    }
 
+    [HttpPost("{id:guid}/photo")]
+    [Authorize(Roles = "User, Admin")]
+    public async Task<IActionResult> UploadPhoto(Guid id,[FromForm] IFormFile file)
+    {
+        await _service.UploadPhoto(id, file);
+        return NoContent();
+    }
 }

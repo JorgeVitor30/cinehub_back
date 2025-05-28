@@ -10,6 +10,7 @@ public static class RoleClaimExtention
     {
         var result = new List<Claim>
         {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Name),
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.Role, Enum.GetName(typeof(Role), user.Role) ?? "NoRole")

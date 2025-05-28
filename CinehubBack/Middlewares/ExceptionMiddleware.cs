@@ -29,7 +29,15 @@ public class ExceptionMiddleware
     private Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        
+        if (exception is BaseException baseException)
+        {
+            context.Response.StatusCode = (int)baseException.Status;
+        }
+        else
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        }
 
         var result = JsonSerializer.Serialize(new
         {

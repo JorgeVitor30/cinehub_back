@@ -1,4 +1,4 @@
-namespace Api.Data.Dtos;
+namespace CinehubBack.Data;
 
 public class Parameter
 {
@@ -17,5 +17,8 @@ public class Parameter
     }
     public Dictionary<string, object?> Args { get; init; } = new Dictionary<string, object?>();
 
-    public T? Get<T>(string key) => (T?) Args[key];
+    public T? Get<T>(string key)
+    {
+        return Args.TryGetValue(key, out var value) ? (T?)value : default;
+    }
 }
