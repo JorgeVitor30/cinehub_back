@@ -5,7 +5,6 @@ using CinehubBack.Data;
 using CinehubBack.Data.Movie;
 using CinehubBack.Expections;
 using CinehubBack.Model;
-using CinehubBack.Services.ImgBBService;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinehubBack.Services.Movie;
@@ -253,7 +252,7 @@ public class MovieService: IMovieService
         }
         
         var responsePhotos = _imageUploadService.UploadImage(addMoviePhotos.PosterPhoto, addMoviePhotos.BackPhoto);
-
+        
         movie.BackPhotoUrl = responsePhotos.BackPhotoUrl;
         movie.PosterPhotoUrl = responsePhotos.PosterPhotoUrl;
         _repository.Update(movie);

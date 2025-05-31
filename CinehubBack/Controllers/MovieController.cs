@@ -21,7 +21,7 @@ public class MovieController: ControllerBase
         _tokenService = tokenService;
     }
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [HttpPost]
     public IActionResult Create([FromBody] CreateMovieDto createMovieDto)
     {
@@ -78,7 +78,7 @@ public class MovieController: ControllerBase
     }
 
     [HttpPost("{id:guid}/photo")]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public IActionResult Create(Guid id, [FromForm] AddMoviePhotosDto addMoviePhotos)
     {
         return Ok(_service.AddPhotoMovies(id, addMoviePhotos));
