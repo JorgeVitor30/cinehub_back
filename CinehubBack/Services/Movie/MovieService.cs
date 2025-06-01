@@ -50,11 +50,11 @@ public class MovieService: IMovieService
             
             query = sortBy switch
             {
-                "title" => sortOrder == "desc" ? query.OrderByDescending(m => m.Title) : query.OrderBy(m => m.Title),
-                "releasedate" => sortOrder == "desc" ? query.OrderByDescending(m => m.ReleaseDate) : query.OrderBy(m => m.ReleaseDate),
-                "voteaverage" => sortOrder == "desc" ? query.OrderByDescending(m => m.VoteAverage) : query.OrderBy(m => m.VoteAverage),
-                "popularity" => sortOrder == "desc" ? query.OrderByDescending(m => m.Popularity) : query.OrderBy(m => m.Popularity),
-                _ => query.OrderByDescending(m => m.Popularity) 
+                "title" => query.OrderBy(m => m.Title),
+                "releasedate" => query.OrderByDescending(m => m.ReleaseDate),
+                "voteaverage" => query.OrderByDescending(m => m.VoteAverage),
+                "popularity" => query.OrderByDescending(m => m.Popularity),
+                _ => query.OrderByDescending(m => m.Popularity)
             };
             
             return query.Select(m => new ReadMovieDto
