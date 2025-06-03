@@ -45,7 +45,10 @@ public class RateService: IRateService
         {
             throw new BaseException("400", HttpStatusCode.BadRequest, "Movie already rated");
         }
-
+        
+        movie.VoteAverage = (movie.VoteAverage * movie.VoteCount + createRateDto.RateValue) / (movie.VoteCount + 1);
+        movie.VoteCount += 1;
+        
         var rateEntity = _mapper.Map<Model.Rate>(createRateDto);
         _repository.Create(rateEntity);
         _repository.SaveChanges();
@@ -58,6 +61,9 @@ public class RateService: IRateService
        {
            throw new BaseException("404", HttpStatusCode.NotFound, "Rate not found");
        }
+       
+       var movie = _movieRepository.GetById(rate.MovieId);
+       movie!.VoteAverage = (movie.VoteAverage * movie.VoteCount - rate.RateValue + updateRateDto.RateValue) / movie.VoteCount;
        
        _mapper.Map(updateRateDto, rate);
        _repository.Update(rate);
