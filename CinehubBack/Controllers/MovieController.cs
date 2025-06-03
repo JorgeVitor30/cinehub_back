@@ -36,7 +36,6 @@ public class MovieController: ControllerBase
         [FromQuery] string? genre = null,
         [FromQuery] decimal note = 0,
         [FromQuery] string? sortBy = null,
-        [FromQuery] string? sortOrder = null,
         [FromQuery] int size = 10,
         [FromQuery] int page = 0)
     {
@@ -50,7 +49,6 @@ public class MovieController: ControllerBase
                 {"genre", genre},
                 {"note", note},
                 {"sortBy", sortBy},
-                {"sortOrder", sortOrder}
             }
         };
         return Ok(_service.GetAll(parameter, userId));
