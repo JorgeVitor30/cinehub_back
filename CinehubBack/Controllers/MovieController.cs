@@ -31,24 +31,18 @@ public class MovieController: ControllerBase
     
     [Authorize(Roles = "Admin, User")]
     [HttpGet]
-    public IActionResult GetAll(
-        [FromQuery] string? title,
-        [FromQuery] string? genre = null,
-        [FromQuery] decimal note = 0,
-        [FromQuery] string? sortBy = null,
-        [FromQuery] int size = 10,
-        [FromQuery] int page = 0)
-    {
+    public IActionResult GetAll([FromQuery] MovieFilterDto filter) {
         var token = BearerHandler.ExtractTokenFromHeader(Request.Headers);
         var userId = _tokenService.GetUserIdFromToken(token);
+        
         var parameter = new Parameter {
-            Page = page,
-            Size = size,
+            Page = filter.Page,
+            Size = filter.Size,
             Args = new Dictionary<string, object?> {
-                {"title", title},
-                {"genre", genre},
-                {"note", note},
-                {"sortBy", sortBy},
+                {"title", filter.Title},
+                {"genre", filter.Genre},
+                {"note", filter.Note},
+                {"sortBy", filter.SortBy},
             }
         };
         return Ok(_service.GetAll(parameter, userId));
