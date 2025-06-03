@@ -117,84 +117,27 @@ public class MovieService: IMovieService
     public ReadHomeMovieDto GetHome()
     {
         var popularMovies = _repository.GetAllList<ReadMovieDto>(
-            query => query.OrderByDescending(m => m.Popularity)
+            query => query
+                .OrderByDescending(m => m.Popularity)
                 .Take(DefaultPageSize)
-                .Select(m => new ReadMovieDto
-                {
-                    Id = m.Id,
-                    Title = m.Title,
-                    Overview = m.Overview,
-                    VoteCount = m.VoteCount,
-                    VoteAverage = m.VoteAverage,
-                    ReleaseDate = m.ReleaseDate,
-                    Revenue = m.Revenue,
-                    RunTime = m.RunTime,
-                    Adult = m.Adult,
-                    Budget = m.Budget,
-                    PosterPhotoUrl = m.PosterPhotoUrl,
-                    BackPhotoUrl = m.BackPhotoUrl,
-                    OriginalLanguage = m.OriginalLanguage,
-                    Popularity = m.Popularity,
-                    Tagline = m.Tagline,
-                    KeyWords = m.KeyWords,
-                    Productions = m.Productions,
-                    Genres = m.Genres
-                })
+                .ProjectTo<ReadMovieDto>(_mapper.ConfigurationProvider)
         );
 
         var newReleases = _repository.GetAllList<ReadMovieDto>(
-            query => query.OrderByDescending(m => m.ReleaseDate)
+            query => query
+                .OrderByDescending(m => m.ReleaseDate)
                 .Take(DefaultPageSize)
-                .Select(m => new ReadMovieDto
-                {
-                    Id = m.Id,
-                    Title = m.Title,
-                    Overview = m.Overview,
-                    VoteCount = m.VoteCount,
-                    VoteAverage = m.VoteAverage,
-                    ReleaseDate = m.ReleaseDate,
-                    Revenue = m.Revenue,
-                    RunTime = m.RunTime,
-                    Adult = m.Adult,
-                    Budget = m.Budget,
-                    PosterPhotoUrl = m.PosterPhotoUrl,
-                    BackPhotoUrl = m.BackPhotoUrl,
-                    OriginalLanguage = m.OriginalLanguage,
-                    Popularity = m.Popularity,
-                    Tagline = m.Tagline,
-                    KeyWords = m.KeyWords,
-                    Productions = m.Productions,
-                    Genres = m.Genres
-                })
+                .ProjectTo<ReadMovieDto>(_mapper.ConfigurationProvider)
         );
-        
+
         var classicMovies = _repository.GetAllList<ReadMovieDto>(
-            query => query.Where(m => m.VoteAverage > 8 && !m.Adult)
+            query => query
+                .Where(m => m.VoteAverage > 8 && !m.Adult)
                 .OrderBy(m => m.ReleaseDate)
                 .Take(DefaultPageSize)
-                .Select(m => new ReadMovieDto
-                {
-                    Id = m.Id,
-                    Title = m.Title,
-                    Overview = m.Overview,
-                    VoteCount = m.VoteCount,
-                    VoteAverage = m.VoteAverage,
-                    ReleaseDate = m.ReleaseDate,
-                    Revenue = m.Revenue,
-                    RunTime = m.RunTime,
-                    Adult = m.Adult,
-                    Budget = m.Budget,
-                    PosterPhotoUrl = m.PosterPhotoUrl,
-                    BackPhotoUrl = m.BackPhotoUrl,
-                    OriginalLanguage = m.OriginalLanguage,
-                    Popularity = m.Popularity,
-                    Tagline = m.Tagline,
-                    KeyWords = m.KeyWords,
-                    Productions = m.Productions,
-                    Genres = m.Genres
-                })
+                .ProjectTo<ReadMovieDto>(_mapper.ConfigurationProvider)
         );
-        
+
         return new ReadHomeMovieDto
         {
             PopularMovies = popularMovies.ToArray(),
