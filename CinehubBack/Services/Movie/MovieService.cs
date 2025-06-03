@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Net;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using CinehubBack.Data;
 using CinehubBack.Data.Movie;
 using CinehubBack.Expections;
@@ -46,8 +47,7 @@ public class MovieService: IMovieService
             query = ApplyFilters(query, parameter, userId);
             
             var sortBy = parameter.Get<string>("sortBy")?.ToLower();
-            var sortOrder = parameter.Get<string>("sortOrder")?.ToLower();
-            
+
             query = sortBy switch
             {
                 "title" => query.OrderBy(m => m.Title),
@@ -57,27 +57,7 @@ public class MovieService: IMovieService
                 _ => query.OrderByDescending(m => m.Popularity)
             };
             
-            return query.Select(m => new ReadMovieDto
-            {
-                Id = m.Id,
-                Title = m.Title,
-                Overview = m.Overview,
-                VoteCount = m.VoteCount,
-                VoteAverage = m.VoteAverage,
-                ReleaseDate = m.ReleaseDate,
-                Revenue = m.Revenue,
-                RunTime = m.RunTime,
-                Adult = m.Adult,
-                Budget = m.Budget,
-                PosterPhotoUrl = m.PosterPhotoUrl,
-                BackPhotoUrl = m.BackPhotoUrl,
-                OriginalLanguage = m.OriginalLanguage,
-                Popularity = m.Popularity,
-                Tagline = m.Tagline,
-                KeyWords = m.KeyWords,
-                Productions = m.Productions,
-                Genres = m.Genres
-            });
+            return query.ProjectTo<ReadMovieDto>(_mapper.ConfigurationProvider);
         }, parameter);
     }
     
