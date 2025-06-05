@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Net;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using CinehubBack.Data;
 using CinehubBack.Data.Dtos.User;
 using CinehubBack.Data.Movie;
@@ -51,49 +52,16 @@ public class UserService : IUserService
 
     public Page<ReadUserDto> GetAll(Parameter parameter)
     {
-        return _repository.GetAll<ReadUserDto>(query => {
+        return _repository.GetAll<ReadUserDto>(query =>
+        {
             var name = parameter.Get<string>("name");
-            if (name != null)
+            if (!string.IsNullOrEmpty(name))
                 query = query.Where(u => EF.Functions.Like(u.Name, $"%{name}%"));
 
             return query
                 .Include(u => u.Favorites)
                 .ThenInclude(f => f.Movie)
-                .Select(u => new ReadUserDto
-                {
-                    Id = u.Id,
-                    Email = u.Email,
-                    Name = u.Name,
-                    Role = u.Role.ToString(),
-                    VisibilityPublic = u.VisibilityPublic,
-                    CreatedAt = u.CreatedAt,
-                    Photo = u.Photo != null ? $"data:image/jpeg;base64,{Convert.ToBase64String(u.Photo)}" : null,
-                    Favorites = u.Favorites
-                        .Where(f => f.Movie != null)
-                        .Select(f => new ReadMovieDto
-                        {
-                            Id = f.Movie.Id,
-                            Title = f.Movie.Title, 
-                            Overview = f.Movie.Overview,
-                            VoteCount = f.Movie.VoteCount,
-                            VoteAverage = f.Movie.VoteAverage,
-                            ReleaseDate = f.Movie.ReleaseDate,
-                            Revenue = f.Movie.Revenue,
-                            RunTime = f.Movie.RunTime,
-                            Adult = f.Movie.Adult,
-                            Budget = f.Movie.Budget,
-                            PosterPhotoUrl = f.Movie.PosterPhotoUrl,
-                            BackPhotoUrl = f.Movie.BackPhotoUrl,
-                            OriginalLanguage = f.Movie.OriginalLanguage,
-                            Popularity = f.Movie.Popularity,
-                            Tagline = f.Movie.Tagline,
-                            KeyWords = f.Movie.KeyWords,
-                            Productions = f.Movie.Productions,
-                            Genres = f.Movie.Genres
-                        })
-                        .ToList(),
-                    RatedList = null
-                });
+                .ProjectTo<ReadUserDto>(_mapper.ConfigurationProvider);
         }, parameter);
     }
 

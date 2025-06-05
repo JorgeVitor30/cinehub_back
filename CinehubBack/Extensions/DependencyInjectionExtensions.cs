@@ -1,4 +1,5 @@
 using CinehubBack.Data;
+using CinehubBack.Data.Movie;
 using CinehubBack.Data.Repositories;
 using CinehubBack.Encrypt;
 using CinehubBack.Middlewares.Auth;
@@ -27,6 +28,11 @@ public static class DependencyInjectionExtensions
         services.AddScoped<IMovieService, MovieService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IRateService, RateService>();
+        
+        services.AddScoped<IMovieFilter, TitleFilter>();
+        services.AddScoped<IMovieFilter, GenreFilter>();
+        services.AddScoped<IMovieFilter, VoteAverageFilter>();
+        services.AddScoped<IMovieFilter, ExcludeRatedAndFavoriteFilter>();
 
         services.AddSingleton<ITokenService, JwtService>();
         services.AddSingleton<IPasswordEncoder, BCryptEncoder>();
