@@ -52,17 +52,68 @@ public class UserService : IUserService
 
     public Page<ReadAllUserDto> GetAll(Parameter parameter)
     {
-        return _repository.GetAll<ReadAllUserDto>(query =>
+        var page = _repository.GetAll<ReadAllUserDto>(query =>
         {
             var name = parameter.Get<string>("name");
             if (!string.IsNullOrEmpty(name))
                 query = query.Where(u => EF.Functions.Like(u.Name, $"%{name}%"));
 
             return query
-                .Include(u => u.Favorites)
-                .ThenInclude(f => f.Movie)
                 .ProjectTo<ReadAllUserDto>(_mapper.ConfigurationProvider);
         }, parameter);
+        
+        foreach (var userDto in page.Content)
+        {
+            var ratedListDtoRate = new List<ReadRateDto?>();
+            string mostCommonGenre = "Em Breve";
+
+            var ratedList = _rateRepository.Raw(q => q.Where(r => r.UserId == userDto.Id)).ToList();
+
+            if (ratedList.Count < 1)
+            {
+                userDto.RatedList = null;
+                userDto.Genre = mostCommonGenre;
+                userDto.TopGenres = new List<string>();
+                continue;
+            }
+
+            Dictionary<string, int> genreCount = new();
+
+            foreach (var rateEntity in ratedList)
+            {
+                var movie = _movieRepository.GetById(rateEntity.MovieId);
+                if (movie is null) continue;
+
+                foreach (var genre in movie.Genres.Split(","))
+                {
+                    var trimmed = genre.Trim();
+                    genreCount[trimmed] = genreCount.TryGetValue(trimmed, out var count) ? count + 1 : 1;
+                }
+
+                var movieDto = _mapper.Map<ReadMovieDto>(movie);
+                var rateDto = new ReadRateDto()
+                {
+                    Rate = rateEntity.RateValue,
+                    Comment = rateEntity.Comment,
+                    Movie = movieDto,
+                    Id = rateEntity.Id,
+                };
+                ratedListDtoRate.Add(rateDto);
+            }
+
+            mostCommonGenre = genreCount.OrderByDescending(g => g.Value).FirstOrDefault().Key;
+
+            userDto.RatedList = ratedListDtoRate;
+            userDto.Genre = mostCommonGenre;
+            userDto.TopGenres = genreCount
+                .OrderByDescending(g => g.Value)
+                .Take(3)
+                .Select(g => g.Key)
+                .ToList();
+            userDto.RateCount = ratedListDtoRate.Count;
+        }
+        
+        return page;
     }
 
     public Model.User? GetByEmail(string email)

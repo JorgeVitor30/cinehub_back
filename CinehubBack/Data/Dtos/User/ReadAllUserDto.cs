@@ -13,8 +13,8 @@ public class ReadAllUserDto
         public string? Photo { get; set; }
         public required DateTime CreatedAt { get; set; }
         public required string Genre { get; set; }
-        public required List<ReadMovieDto> Favorites { get; set; } = new();
         public required List<ReadRateDto?> RatedList { get; set; } = new();
         public required RankingUser RankingUser { get; set; }
-    
+        public List<string> TopGenres { get; set; } = new();
+        public int RateCount { get; set; }
 }
