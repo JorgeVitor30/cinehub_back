@@ -79,18 +79,33 @@ public class RateService: IRateService
         {
             throw new BaseException("404", HttpStatusCode.NotFound, "User not found");
         }
-        
-        var movie =  _movieRepository.GetById(deleteRateDto.MovieId);
+    
+        var movie = _movieRepository.GetById(deleteRateDto.MovieId);
         if (movie is null)
         {
             throw new BaseException("404", HttpStatusCode.NotFound, "Movie not found");
         }
-        
-        var rate = _repository.Raw(query=> query.Where(r => r.UserId == deleteRateDto.UserId && r.MovieId == deleteRateDto.MovieId)).ToList();
-        if (!rate.IsNullOrEmpty())
+
+        var rate = _repository.Raw(query =>
+            query.Where(r => r.UserId == deleteRateDto.UserId && r.MovieId == deleteRateDto.MovieId)
+        ).FirstOrDefault();
+
+        if (rate is null)
         {
-            _repository.Delete(rate[0]);
-            _repository.SaveChanges();
+            throw new BaseException("404", HttpStatusCode.NotFound, "Rate not found");
         }
+        
+        if (movie.VoteCount > 1)
+        {
+            movie.VoteAverage = (movie.VoteAverage * movie.VoteCount - rate.RateValue) / (movie.VoteCount - 1);
+        }
+        else
+        {
+            movie.VoteAverage = 0;
+        }
+        movie.VoteCount -= 1;
+
+        _repository.Delete(rate);
+        _repository.SaveChanges();
     }
 }
