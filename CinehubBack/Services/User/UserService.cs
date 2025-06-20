@@ -50,9 +50,9 @@ public class UserService : IUserService
         _repository.SaveChanges();
     }
 
-    public Page<ReadUserDto> GetAll(Parameter parameter)
+    public Page<ReadAllUserDto> GetAll(Parameter parameter)
     {
-        return _repository.GetAll<ReadUserDto>(query =>
+        return _repository.GetAll<ReadAllUserDto>(query =>
         {
             var name = parameter.Get<string>("name");
             if (!string.IsNullOrEmpty(name))
@@ -61,7 +61,7 @@ public class UserService : IUserService
             return query
                 .Include(u => u.Favorites)
                 .ThenInclude(f => f.Movie)
-                .ProjectTo<ReadUserDto>(_mapper.ConfigurationProvider);
+                .ProjectTo<ReadAllUserDto>(_mapper.ConfigurationProvider);
         }, parameter);
     }
 
