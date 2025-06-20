@@ -15,4 +15,11 @@ public class ReadUserByIdDto
     public required string Genre { get; set; }
     public required List<ReadMovieDto> Favorites { get; set; } = new();
     public required List<ReadRateDto?> RatedList { get; set; } = new();
+    public required RankingUser RankingUser { get; set; }
+}
+
+public class RankingUser
+{
+    public required int CurrentRank { get; set; }
+    public required int TotalUsers {get; set;}
 }

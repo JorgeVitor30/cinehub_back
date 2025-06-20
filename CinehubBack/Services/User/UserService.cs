@@ -132,6 +132,24 @@ public class UserService : IUserService
         
         readUserDto.RatedList = ratedListDtoRate;
         readUserDto.Genre = mostCommonGenre;
+        
+        var rankedUsers = _rateRepository.Raw(query =>
+            query
+                .GroupBy(r => r.UserId)
+                .Select(g => new
+                {
+                    UserId = g.Key,
+                    Count = g.Count()
+                })
+                .OrderByDescending(g => g.Count)
+                .ToList()
+        );
+        
+        readUserDto.RankingUser = new RankingUser()
+        {
+            CurrentRank = rankedUsers.FindIndex(u => u.UserId == user.Id) + 1,
+            TotalUsers = _repository.Raw(query=> query.Count())
+        };
 
         return readUserDto;
     }
