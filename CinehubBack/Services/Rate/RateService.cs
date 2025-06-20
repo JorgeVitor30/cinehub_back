@@ -1,8 +1,10 @@
 using System.Net;
 using AutoMapper;
 using CinehubBack.Data;
+using CinehubBack.Data.Dtos.Rate;
 using CinehubBack.Data.Rate;
 using CinehubBack.Expections;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CinehubBack.Services.Rate;
 
@@ -68,5 +70,27 @@ public class RateService: IRateService
        _mapper.Map(updateRateDto, rate);
        _repository.Update(rate);
        _repository.SaveChanges();
+    }
+
+    public void DeleteRate(DeleteRateDto deleteRateDto)
+    {
+        var user = _userRepository.GetById(deleteRateDto.UserId);
+        if (user is null)
+        {
+            throw new BaseException("404", HttpStatusCode.NotFound, "User not found");
+        }
+        
+        var movie =  _movieRepository.GetById(deleteRateDto.MovieId);
+        if (movie is null)
+        {
+            throw new BaseException("404", HttpStatusCode.NotFound, "Movie not found");
+        }
+        
+        var rate = _repository.Raw(query=> query.Where(r => r.UserId == deleteRateDto.UserId && r.MovieId == deleteRateDto.MovieId)).ToList();
+        if (!rate.IsNullOrEmpty())
+        {
+            _repository.Delete(rate[0]);
+            _repository.SaveChanges();
+        }
     }
 }
