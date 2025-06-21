@@ -17,4 +17,5 @@ public class ReadAllUserDto
         public required RankingUser RankingUser { get; set; }
         public List<string> TopGenres { get; set; } = new();
         public int RateCount { get; set; }
+        public required string Description { get; set; }
 }
