@@ -221,6 +221,7 @@ public class UserService : IUserService
         user.VisibilityPublic = updateUserDto.VisibilityPublic;
         user.Email = updateUserDto.Email ?? user.Email;
         user.Name = updateUserDto.Name ?? user.Name;
+        user.Description = updateUserDto.Description ?? user.Description;
 
         CheckForDuplicate(u => u.Email == user.Email && u.Id != id, "User with this email already exists");
         _repository.Update(user);

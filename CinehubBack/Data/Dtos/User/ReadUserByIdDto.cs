@@ -16,6 +16,7 @@ public class ReadUserByIdDto
     public required List<ReadMovieDto> Favorites { get; set; } = new();
     public required List<ReadRateDto?> RatedList { get; set; } = new();
     public required RankingUser RankingUser { get; set; }
+    public required string Description { get; set; }
 }
 
 public class RankingUser

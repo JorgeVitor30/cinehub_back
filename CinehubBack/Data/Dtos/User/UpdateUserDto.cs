@@ -7,4 +7,5 @@ public class UpdateUserDto
      public required string Name { get; set; }
     [EmailAddress] public required string Email { get; set; }
     public bool VisibilityPublic { get; set; }
+    public string Description { get; set; } = null!;
 }
