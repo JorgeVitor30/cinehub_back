@@ -64,6 +64,12 @@ public class UserService : IUserService
         
         foreach (var userDto in page.Content)
         {
+            var userEntity = _repository.GetById(userDto.Id);
+            if (userEntity?.Photo != null)
+            {
+                userDto.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(userEntity.Photo)}";
+            }
+            
             var ratedListDtoRate = new List<ReadRateDto?>();
             string mostCommonGenre = "Em Breve";
 
