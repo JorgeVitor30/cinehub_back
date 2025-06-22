@@ -58,37 +58,49 @@ public class UserService : IUserService
             if (!string.IsNullOrEmpty(name))
                 query = query.Where(u => EF.Functions.Like(u.Name, $"%{name}%"));
 
-            return query
-                .ProjectTo<ReadAllUserDto>(_mapper.ConfigurationProvider);
+            return query.ProjectTo<ReadAllUserDto>(_mapper.ConfigurationProvider);
         }, parameter);
+
+        var userIds = page.Content.Select(u => u.Id).ToList();
         
-        foreach (var userDto in page.Content)
+        var userPhotos = _repository.Raw(q => q
+            .Where(u => userIds.Contains(u.Id))
+            .Select(u => new { u.Id, u.Photo }))
+            .ToDictionary(u => u.Id, u => u.Photo);
+        foreach (var user in page.Content)
         {
-            var userEntity = _repository.GetById(userDto.Id);
-            if (userEntity?.Photo != null)
-            {
-                userDto.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(userEntity.Photo)}";
-            }
-            
-            var ratedListDtoRate = new List<ReadRateDto?>();
-            string mostCommonGenre = "Em Breve";
+            if (userPhotos.TryGetValue(user.Id, out var photo) && photo != null)
+                user.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(photo)}";
+        }
+        
+        var allRates = _rateRepository.Raw(q => q
+            .Where(r => userIds.Contains(r.UserId)))
+            .ToList();
 
-            var ratedList = _rateRepository.Raw(q => q.Where(r => r.UserId == userDto.Id)).ToList();
+        var movieIds = allRates.Select(r => r.MovieId).Distinct().ToList();
+        
+        var allMovies = _movieRepository.Raw(q => q
+            .Where(m => movieIds.Contains(m.Id)))
+            .ToDictionary(m => m.Id, m => m);
+        
+        var ratesByUser = allRates.GroupBy(r => r.UserId).ToDictionary(g => g.Key, g => g.ToList());
 
-            if (ratedList.Count < 1)
+        foreach (var user in page.Content)
+        {
+            if (!ratesByUser.TryGetValue(user.Id, out var ratedList))
             {
-                userDto.RatedList = null;
-                userDto.Genre = mostCommonGenre;
-                userDto.TopGenres = new List<string>();
+                user.RatedList = null;
+                user.Genre = "Em Breve";
+                user.TopGenres = new List<string>();
                 continue;
             }
 
-            Dictionary<string, int> genreCount = new();
+            var genreCount = new Dictionary<string, int>();
+            var ratedListDtoRate = new List<ReadRateDto>();
 
             foreach (var rateEntity in ratedList)
             {
-                var movie = _movieRepository.GetById(rateEntity.MovieId);
-                if (movie is null) continue;
+                if (!allMovies.TryGetValue(rateEntity.MovieId, out var movie)) continue;
 
                 foreach (var genre in movie.Genres.Split(","))
                 {
@@ -97,28 +109,21 @@ public class UserService : IUserService
                 }
 
                 var movieDto = _mapper.Map<ReadMovieDto>(movie);
-                var rateDto = new ReadRateDto()
+                ratedListDtoRate.Add(new ReadRateDto
                 {
                     Rate = rateEntity.RateValue,
                     Comment = rateEntity.Comment,
                     Movie = movieDto,
-                    Id = rateEntity.Id,
-                };
-                ratedListDtoRate.Add(rateDto);
+                    Id = rateEntity.Id
+                });
             }
 
-            mostCommonGenre = genreCount.OrderByDescending(g => g.Value).FirstOrDefault().Key;
-
-            userDto.RatedList = ratedListDtoRate;
-            userDto.Genre = mostCommonGenre;
-            userDto.TopGenres = genreCount
-                .OrderByDescending(g => g.Value)
-                .Take(3)
-                .Select(g => g.Key)
-                .ToList();
-            userDto.RateCount = ratedListDtoRate.Count;
+            user.RatedList = ratedListDtoRate;
+            user.RateCount = ratedListDtoRate.Count;
+            user.Genre = genreCount.OrderByDescending(g => g.Value).FirstOrDefault().Key ?? "Em Breve";
+            user.TopGenres = genreCount.OrderByDescending(g => g.Value).Take(3).Select(g => g.Key).ToList();
         }
-        
+
         return page;
     }
 
