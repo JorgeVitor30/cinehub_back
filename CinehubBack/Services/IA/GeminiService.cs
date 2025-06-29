@@ -14,11 +14,24 @@ public class GeminiService
         _apiKey = options.Value.Key;
         _httpClient = new HttpClient();
     }
+    
+    private const string DefaultPrompt = """
+     Posso te ajudar com:
+     🎬 Recomendações personalizadas de filmes
+     📝 Informações sobre filmes, diretores e atores
+     🎭 Análises e críticas cinematográficas
+     🎪 Dicas sobre gêneros e tendências
+     💬 Discussões sobre cinema e cultura pop
+     E principalmente com recomendação de filmes
+
+     Como posso te ajudar hoje?
+
+     """;
 
     public async Task<string> GenerateContentAsync(string prompt)
     {
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{Model}:generateContent?key={_apiKey}";
-
+        
         var body = new
         {
             contents = new[]
@@ -27,7 +40,7 @@ public class GeminiService
                 {
                     parts = new[]
                     {
-                        new { text = prompt }
+                        new { text = DefaultPrompt + prompt }
                     }
                 }
             }
