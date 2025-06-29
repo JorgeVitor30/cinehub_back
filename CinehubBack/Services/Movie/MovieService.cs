@@ -16,14 +16,16 @@ public class MovieService: IMovieService
     private readonly IMapper _mapper;
     private readonly IRepository<Favorites> _favoritesRepository;
     private readonly IRepository<Model.Rate> _rateRepository;
+    private readonly IRepository<Model.User> _userRepository;
     private readonly IImageUploadService _imageUploadService;
     private readonly IEnumerable<IMovieFilter> _movieFilters;
     private const int DefaultPageSize = 10;
         
-    public MovieService(IRepository<Model.Movie> repository, IMapper mapper, IRepository<Favorites> favoritesRepository, IRepository<Model.Rate> rateRepository, IImageUploadService imageUploadService, IEnumerable<IMovieFilter> movieFilters)
+    public MovieService(IRepository<Model.Movie> repository, IMapper mapper, IRepository<Favorites> favoritesRepository, IRepository<Model.Rate> rateRepository, IRepository<Model.User> userRepository, IImageUploadService imageUploadService, IEnumerable<IMovieFilter> movieFilters)
     {
         _repository = repository;
         _rateRepository = rateRepository;
+        _userRepository = userRepository;
         _mapper = mapper;
         _favoritesRepository = favoritesRepository;
         _imageUploadService = imageUploadService;
@@ -160,4 +162,91 @@ public class MovieService: IMovieService
             PosterPhotoUrl = responsePhotos.PosterPhotoUrl
         };
     }
+
+    public List<ReadMovieDto> MovieRecommends(Guid id)
+    {
+        var user = _userRepository.GetById(id) ?? throw new BaseException("404", HttpStatusCode.NotFound, "User not found");
+
+        var rates = _rateRepository.Raw(query => query.Where(f => f.UserId.Equals(user.Id))).ToList();
+        if (rates.Count() < 10)
+        {
+            throw new BaseException("400", HttpStatusCode.BadRequest,
+                "User has not 10 favorites movies to get Recommends");
+        }
+
+        var topFavoritesRate = rates.Where(f => f.RateValue >= 7).ToList();
+        var favoriteMovies = topFavoritesRate.Select(f => _repository.GetById(f.MovieId)).ToList();
+        var allGenres = favoriteMovies
+            .SelectMany(m => m.Genres?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>())
+            .Select(g => g.Trim())
+            .GroupBy(g => g)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .ToList();        
+        var allProductions = favoriteMovies
+            .SelectMany(m => m.Productions?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>())
+            .Select(p => p.Trim())
+            .GroupBy(p => p)
+            .OrderByDescending(p => p.Count())
+            .Select(p => p.Key)
+            .ToList();
+        var allKeywords = favoriteMovies
+            .SelectMany(m => m.KeyWords?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>())
+            .Select(k => k.Trim())
+            .GroupBy(k => k)
+            .OrderByDescending(k => k.Count())
+            .Select(k => k.Key)
+            .ToList();
+
+        var preferredLanguage = favoriteMovies.GroupBy(m => m.OriginalLanguage).OrderByDescending(g => g.Count()).First().Key;
+        
+        var avgRuntime = favoriteMovies.Average(m => m.RunTime);
+        var avgPopularity = (double)favoriteMovies.Average(m => m.Popularity);
+        var avgBudget = (double)favoriteMovies.Average(m => m.Budget);
+
+        var ratedMovieIds = rates.Select(r => r.MovieId).ToHashSet();
+        var candidateMovies = _repository.GetAllList(query => query.Where(m => !ratedMovieIds.Contains(m.Id)));
+        
+        var scoredMovies = new List<(Model.Movie movie, double score)>();
+        foreach (var movie in candidateMovies)
+        {
+            double score = 0;
+
+            var movieGenres = movie.Genres?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(g => g.Trim()).ToList() ?? new List<string>();
+            var movieKeywords = movie.KeyWords?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(k => k.Trim()).ToList() ?? new List<string>();
+            var movieProductions = movie.Productions?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToList() ?? new List<string>();
+
+            score += 2.0 * FuzzyListMatch(allGenres, movieGenres);
+            score += 1.5 * FuzzyListMatch(allKeywords, movieKeywords);
+            score += 1.0 * (movie.OriginalLanguage == preferredLanguage ? 1 : 0);
+            score += 1.0 * FuzzyListMatch(allProductions, movieProductions);
+            score += 1.5 * FuzzySimilarity(avgRuntime, movie.RunTime);
+            score += 1.0 * FuzzySimilarity(avgPopularity,(double)movie.Popularity);
+            score += 0.5 * FuzzySimilarity(avgBudget, (double)movie.Budget);
+
+            scoredMovies.Add((movie, score));
+        }
+        
+        var topRecommendations = scoredMovies
+            .OrderByDescending(s => s.score)
+            .Take(10)
+            .Select(s => _mapper.Map<ReadMovieDto>(s.movie))
+            .ToList();
+
+        return topRecommendations;
+    }
+
+    private double FuzzySimilarity(double a, double b)
+    {
+        if (a == 0) return 0;
+        return Math.Max(0, 1 - Math.Abs(a - b) / a);
+    }
+    
+    private double FuzzyListMatch(List<string> userList, List<string> candidateList)
+    {
+        if (userList == null || userList.Count == 0) return 0;
+        var matches = userList.Intersect(candidateList).Count();
+        return (double)matches / userList.Count;
+    }
+
 }
