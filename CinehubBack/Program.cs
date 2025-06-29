@@ -1,6 +1,7 @@
 using CinehubBack.Data;
 using CinehubBack.Extensions;
 using CinehubBack.Middlewares;
+using CinehubBack.Services.IA;
 using CinehubBack.Services.ImageUploadService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -39,6 +40,9 @@ builder.Services.AddCustomAuthorization();
 builder.Services.AddCustomAuthentication();
 builder.Services.AddScoped<SeedingData>();
 builder.Services.AddScoped<IImageUploadService, CloudinaryImageUploadService>();
+builder.Services.Configure<GeminiApiSettings>(
+    builder.Configuration.GetSection("GeminiApi")
+);
 
 builder.Services.AddSwaggerGen(options =>
 {
