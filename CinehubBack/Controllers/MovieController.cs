@@ -75,4 +75,10 @@ public class MovieController: ControllerBase
     {
         return Ok(_service.AddPhotoMovies(id, addMoviePhotos));
     }
+
+    [HttpGet("recommend/{id:guid}")]
+    public IActionResult Recommend(Guid id)
+    {
+        return Ok(_service.MovieRecommends(id));
+    }
 }

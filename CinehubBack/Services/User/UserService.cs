@@ -50,19 +50,81 @@ public class UserService : IUserService
         _repository.SaveChanges();
     }
 
-    public Page<ReadUserDto> GetAll(Parameter parameter)
+    public Page<ReadAllUserDto> GetAll(Parameter parameter)
     {
-        return _repository.GetAll<ReadUserDto>(query =>
+        var page = _repository.GetAll<ReadAllUserDto>(query =>
         {
             var name = parameter.Get<string>("name");
             if (!string.IsNullOrEmpty(name))
                 query = query.Where(u => EF.Functions.Like(u.Name, $"%{name}%"));
 
-            return query
-                .Include(u => u.Favorites)
-                .ThenInclude(f => f.Movie)
-                .ProjectTo<ReadUserDto>(_mapper.ConfigurationProvider);
+            return query.ProjectTo<ReadAllUserDto>(_mapper.ConfigurationProvider);
         }, parameter);
+
+        var userIds = page.Content.Select(u => u.Id).ToList();
+        
+        var userPhotos = _repository.Raw(q => q
+            .Where(u => userIds.Contains(u.Id))
+            .Select(u => new { u.Id, u.Photo }))
+            .ToDictionary(u => u.Id, u => u.Photo);
+        foreach (var user in page.Content)
+        {
+            if (userPhotos.TryGetValue(user.Id, out var photo) && photo != null)
+                user.Photo = $"data:image/jpeg;base64,{Convert.ToBase64String(photo)}";
+        }
+        
+        var allRates = _rateRepository.Raw(q => q
+            .Where(r => userIds.Contains(r.UserId)))
+            .ToList();
+
+        var movieIds = allRates.Select(r => r.MovieId).Distinct().ToList();
+        
+        var allMovies = _movieRepository.Raw(q => q
+            .Where(m => movieIds.Contains(m.Id)))
+            .ToDictionary(m => m.Id, m => m);
+        
+        var ratesByUser = allRates.GroupBy(r => r.UserId).ToDictionary(g => g.Key, g => g.ToList());
+
+        foreach (var user in page.Content)
+        {
+            if (!ratesByUser.TryGetValue(user.Id, out var ratedList))
+            {
+                user.RatedList = null;
+                user.Genre = "Em Breve";
+                user.TopGenres = new List<string>();
+                continue;
+            }
+
+            var genreCount = new Dictionary<string, int>();
+            var ratedListDtoRate = new List<ReadRateDto>();
+
+            foreach (var rateEntity in ratedList)
+            {
+                if (!allMovies.TryGetValue(rateEntity.MovieId, out var movie)) continue;
+
+                foreach (var genre in movie.Genres.Split(","))
+                {
+                    var trimmed = genre.Trim();
+                    genreCount[trimmed] = genreCount.TryGetValue(trimmed, out var count) ? count + 1 : 1;
+                }
+
+                var movieDto = _mapper.Map<ReadMovieDto>(movie);
+                ratedListDtoRate.Add(new ReadRateDto
+                {
+                    Rate = rateEntity.RateValue,
+                    Comment = rateEntity.Comment,
+                    Movie = movieDto,
+                    Id = rateEntity.Id
+                });
+            }
+
+            user.RatedList = ratedListDtoRate;
+            user.RateCount = ratedListDtoRate.Count;
+            user.Genre = genreCount.OrderByDescending(g => g.Value).FirstOrDefault().Key ?? "Em Breve";
+            user.TopGenres = genreCount.OrderByDescending(g => g.Value).Take(3).Select(g => g.Key).ToList();
+        }
+
+        return page;
     }
 
     public Model.User? GetByEmail(string email)
@@ -170,6 +232,7 @@ public class UserService : IUserService
         user.VisibilityPublic = updateUserDto.VisibilityPublic;
         user.Email = updateUserDto.Email ?? user.Email;
         user.Name = updateUserDto.Name ?? user.Name;
+        user.Description = updateUserDto.Description ?? user.Description;
 
         CheckForDuplicate(u => u.Email == user.Email && u.Id != id, "User with this email already exists");
         _repository.Update(user);

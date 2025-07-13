@@ -21,5 +21,7 @@ public class UserMapping : BaseMapping<User>
         builder.Property(u => u.VisibilityPublic).HasColumnName("visibility_public").IsRequired();
         
         builder.Property(u => u.Photo).HasColumnName("photo");
+        
+        builder.Property(u => u.Description).HasColumnName("description");
     }
 }

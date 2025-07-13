@@ -37,6 +37,8 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<ITokenService, JwtService>();
         services.AddSingleton<IPasswordEncoder, BCryptEncoder>();
         services.AddScoped<IAuthService, AuthService>();
+        
+        services.AddScoped<GeminiService>();
     }
 
     private static void AddRepositories(IServiceCollection services)
